@@ -16,10 +16,12 @@ func (db *DB) Save(boxes []*sandbox.SandBox) {
 		values []string
 	)
 
+	db.TotalAccount = 0
 	for _, box := range boxes {
 		for _, value := range db.buildValuesQuery(box) {
 			if value != "" {
 				values = append(values, value)
+				db.TotalAccount++
 			}
 		}
 	}
@@ -33,8 +35,6 @@ func (db *DB) Save(boxes []*sandbox.SandBox) {
 	} else {
 		fmt.Println("[DB] Accounts saved !")
 	}
-
-	db.TotalAccount = len(values)
 }
 
 func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
@@ -42,6 +42,7 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 		// Re-generate outbound to get pure config (without populated host)
 		TLS         *option.OutboundTLSOptions
 		Transport   *option.V2RayTransportOptions
+		TLSSTR      string           = "NTLS"
 		account     *account.Account = account.New(box.Link)
 		anyOutbound interface{}
 		values      []any
@@ -70,6 +71,10 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 	// Null safe BEGIN
 	if TLS == nil {
 		TLS = &option.OutboundTLSOptions{}
+	} else {
+		if TLS.Enabled {
+			TLSSTR = "TLS"
+		}
 	}
 	if Transport == nil {
 		Transport = &option.V2RayTransportOptions{
@@ -78,6 +83,14 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 			GRPCOptions:      option.V2RayGRPCOptions{},
 			QUICOptions:      option.V2RayQUICOptions{},
 			HTTPOptions:      option.V2RayHTTPOptions{},
+		}
+	} else {
+		switch Transport.Type {
+		case "ws", "grpc", "quic":
+		case "websocket":
+			Transport.Type = "ws"
+		default:
+			Transport.Type = "tcp"
 		}
 	}
 	// Null safe END
@@ -187,10 +200,11 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 	for _, mode := range box.ConnectMode {
 		var valuesString string
 		queryValues := append(values, []any{
-			account.Outbound.Tag,
+			strings.ToUpper(fmt.Sprintf("%d %s %s %s %s %s", db.TotalAccount+1, box.IpapiObj.CountryCode, box.IpapiObj.Org, Transport.Type, mode, TLSSTR)),
 			mode,
 			box.IpapiObj.CountryCode,
 			box.IpapiObj.Region,
+			box.IpapiObj.Org,
 			account.Outbound.Type,
 		}...)
 
