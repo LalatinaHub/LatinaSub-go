@@ -6,32 +6,7 @@ import (
 )
 
 func (db *DB) Get(filter string) []DBScheme {
-	query := fmt.Sprintf(`SELECT
-	SERVER,
-	SERVER_PORT,
-	UUID,
-	PASSWORD,
-	SECURITY,
-	ALTER_ID,
-	METHOD,
-	PLUGIN,
-	PLUGIN_OPTS,
-	PROTOCOL,
-	PROTOCOL_PARAM,
-	OBFS,
-	OBFS_PARAM,
-	HOST,
-	TLS,
-	TRANSPORT,
-	PATH,
-	SERVICE_NAME,
-	INSECURE,
-	SNI,
-	REMARK,
-	CONN_MODE,
-	COUNTRY_CODE,
-	REGION,
-	VPN FROM proxies %s`, filter)
+	query := fmt.Sprintf(`SELECT * FROM proxies %s`, filter)
 	rows, _ := db.conn.Query(query)
 	defer rows.Close()
 

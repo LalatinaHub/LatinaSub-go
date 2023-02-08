@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-	"time"
 
 	"github.com/LalatinaHub/LatinaSub-go/account"
 	"github.com/LalatinaHub/LatinaSub-go/sandbox"
@@ -12,7 +11,33 @@ import (
 	"github.com/sagernet/sing-box/option"
 )
 
-func (db *DB) Save(box *sandbox.SandBox) {
+func (db *DB) Save(boxes []*sandbox.SandBox) {
+	var (
+		values []string
+	)
+
+	for _, box := range boxes {
+		for _, value := range db.buildValuesQuery(box) {
+			if value != "" {
+				values = append(values, value)
+			}
+		}
+	}
+
+	_, err := db.conn.Exec(fmt.Sprintf("INSERT INTO proxies VALUES %s", strings.Join(values, ", ")))
+	if err != nil {
+		fmt.Println("[DB] Failed to save accounts !")
+		fmt.Println("[DB] Message:", err.Error())
+		fmt.Println("[DB] Retrying ...")
+		db.Save(boxes)
+	} else {
+		fmt.Println("[DB] Accounts saved !")
+	}
+
+	db.TotalAccount = len(values)
+}
+
+func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 	var (
 		// Re-generate outbound to get pure config (without populated host)
 		TLS         *option.OutboundTLSOptions
@@ -20,6 +45,7 @@ func (db *DB) Save(box *sandbox.SandBox) {
 		account     *account.Account = account.New(box.Link)
 		anyOutbound interface{}
 		values      []any
+		queries     []string
 	)
 
 	switch account.Outbound.Type {
@@ -83,7 +109,7 @@ func (db *DB) Save(box *sandbox.SandBox) {
 			"", // UUID
 			outbound.Password,
 			"", // Security
-			"", // Alter ID
+			0,  // Alter ID
 			"", // Method
 			"", // Plugin
 			"", // Plugin Opts
@@ -100,7 +126,7 @@ func (db *DB) Save(box *sandbox.SandBox) {
 			outbound.UUID,
 			"", // Password
 			"", // Security
-			"", // Alter ID
+			0,  // Alter ID
 			"", // Method
 			"", // Plugin
 			"", // Plugin Opts
@@ -117,7 +143,7 @@ func (db *DB) Save(box *sandbox.SandBox) {
 			"", // UUID
 			outbound.Password,
 			"", // Security
-			"", // Alter ID
+			0,  // Alter ID
 			outbound.Method,
 			outbound.Plugin,
 			outbound.PluginOptions,
@@ -134,7 +160,7 @@ func (db *DB) Save(box *sandbox.SandBox) {
 			"", // UUID
 			outbound.Password,
 			"", // Security
-			"", // Alter ID
+			0,  // Alter ID
 			outbound.Method,
 			"", // Plugin
 			"", // Plugin Opts
@@ -144,7 +170,7 @@ func (db *DB) Save(box *sandbox.SandBox) {
 			outbound.ObfsParam,
 		}
 	default:
-		return
+		return queries
 	}
 
 	// Add TLS and Transport field to values
@@ -190,20 +216,9 @@ func (db *DB) Save(box *sandbox.SandBox) {
 			}
 		}
 
-		query := fmt.Sprintf(`INSERT INTO proxies VALUES (%s)`, strings.TrimSuffix(valuesString, ", "))
-
-		_, err := db.conn.Exec(query)
-		if err != nil {
-			// Force trying to insert account
-			if err.Error() == "database is locked" {
-				fmt.Println("[DB] Database locked, retrying ...")
-				time.Sleep(100 * time.Millisecond)
-				db.Save(box)
-			} else {
-				panic(err)
-			}
-		} else {
-			db.TotalAccount++
-		}
+		query := fmt.Sprintf(`(%s)`, strings.TrimSuffix(valuesString, ", "))
+		queries = append(queries, query)
 	}
+
+	return queries
 }

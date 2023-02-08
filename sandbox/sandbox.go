@@ -54,7 +54,7 @@ func worker(link, connectMode string) (string, ipapi.Ipapi) {
 	// Start sing-box client
 	box.Start()
 
-	proxyClient, _ := url.Parse(fmt.Sprintf("http://127.0.0.1:%d", listenPort))
+	proxyClient, _ := url.Parse(fmt.Sprintf("socks5://0.0.0.0:%d", listenPort))
 	httpClient := &http.Client{
 		Timeout: 10 * time.Second,
 		Transport: &http.Transport{

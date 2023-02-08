@@ -1,10 +1,9 @@
-package main
+package latinasub
 
 import (
 	"fmt"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/LalatinaHub/LatinaSub-go/blacklist"
 	D "github.com/LalatinaHub/LatinaSub-go/db"
@@ -16,9 +15,11 @@ import (
 )
 
 var (
-	ch        chan int = make(chan int, 500)
-	wg        sync.WaitGroup
-	GoodBoxes []*sandbox.SandBox
+	// concurrent int      = helper.GetFreePortsLength() - 100 // Calculate concurrent
+	Concurrent int      = 500
+	ch         chan int = make(chan int, Concurrent)
+	wg         sync.WaitGroup
+	GoodBoxes  []*sandbox.SandBox
 )
 
 func initAll() {
@@ -32,7 +33,6 @@ func Start() int {
 	// Initialize all required modules
 	initAll()
 	db := D.New()
-	db.FlushAndCreate()
 
 	// Merge sub list
 	subscription.Merge()
@@ -70,26 +70,11 @@ func Start() int {
 
 	// Write all result to database
 	fmt.Println("Saving result to database, please wait !")
-	for _, box := range GoodBoxes {
-		db.Save(box)
-	}
+	db.FlushAndCreate()
+	db.Save(GoodBoxes)
 
 	// Write blacklist
 	blacklist.Write()
 
 	return db.TotalAccount
-}
-
-func main() {
-	start := time.Now()
-
-	// Start the main func
-	totalAccount := Start()
-
-	fmt.Printf("\n==============================\n")
-	fmt.Println("Result:", totalAccount)
-	fmt.Println("Time Collapsed:", time.Since(start))
-
-	fmt.Println("Software will exit in 10 second !")
-	time.Sleep(10 * time.Second)
 }
