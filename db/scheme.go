@@ -26,5 +26,6 @@ type DBScheme struct {
 	ConnMode      string `json:"conn_mode,omitempty"`      // 21
 	CountryCode   string `json:"country_code,omitempty"`   // 22
 	Region        string `json:"region,omitempty"`         // 23
-	VPN           string `json:"vpn,omitempty"`            // 24
+	Org           string `json:"org,omitempty"`            // 24
+	VPN           string `json:"vpn,omitempty"`            // 25
 }
