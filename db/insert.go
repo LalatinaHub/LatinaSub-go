@@ -200,7 +200,7 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 	for _, mode := range box.ConnectMode {
 		var valuesString string
 		queryValues := append(values, []any{
-			strings.ToUpper(fmt.Sprintf("%d %s %s %s %s %s", db.TotalAccount+1, box.IpapiObj.CountryCode, box.IpapiObj.Org, Transport.Type, mode, TLSSTR)),
+			strings.ToUpper(fmt.Sprintf("%d %s %s %s %s %s", db.TotalAccount+len(queries)+1, box.IpapiObj.CountryCode, box.IpapiObj.Org, Transport.Type, mode, TLSSTR)),
 			mode,
 			box.IpapiObj.CountryCode,
 			box.IpapiObj.Region,

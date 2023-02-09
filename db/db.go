@@ -36,7 +36,7 @@ func (db *DB) connect() *sql.DB {
 func (db *DB) isExists(values []any) bool {
 	// Refer to data scheme
 	// Server Port, UUID, Password, Transport, Path, Service Name, Conn Mode, VPN
-	id := fmt.Sprintf(`%d_"%s"_"%s"_"%s"_"%s"_"%s"_"%s"_"%s"`, values[1], values[2], values[3], values[15], values[16], values[17], values[21], values[24])
+	id := fmt.Sprintf(`%d_"%s"_"%s"_"%s"_"%s"_"%s"_"%s"_"%s"`, values[1], values[2], values[3], values[15], values[16], values[17], values[21], values[25])
 
 	if values[23] == "cdn" {
 		// Host
