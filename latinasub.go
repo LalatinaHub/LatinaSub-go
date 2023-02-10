@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/LalatinaHub/LatinaSub-go/blacklist"
 	D "github.com/LalatinaHub/LatinaSub-go/db"
@@ -30,6 +31,7 @@ func initAll() {
 }
 
 func Start() int {
+	start := time.Now()
 	// Initialize all required modules
 	initAll()
 	db := D.New()
@@ -75,6 +77,9 @@ func Start() int {
 
 	// Write blacklist
 	blacklist.Write()
+
+	// Log collapsed time
+	fmt.Println("Total time collapsed:", time.Since(start))
 
 	return db.TotalAccount
 }
