@@ -17,7 +17,7 @@ import (
 
 var (
 	// concurrent int      = helper.GetFreePortsLength() - 100 // Calculate concurrent
-	Concurrent int      = 100
+	Concurrent int      = 300
 	ch         chan int = make(chan int, Concurrent)
 	wg         sync.WaitGroup
 	GoodBoxes  []*sandbox.SandBox
