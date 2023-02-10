@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/LalatinaHub/LatinaSub-go/account"
+	"github.com/LalatinaHub/LatinaSub-go/helper"
 	"github.com/LalatinaHub/LatinaSub-go/sandbox"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
@@ -200,7 +201,7 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 	for _, mode := range box.ConnectMode {
 		var valuesString string
 		queryValues := append(values, []any{
-			strings.ToUpper(fmt.Sprintf("%d %s %s %s %s %s", db.TotalAccount+len(queries)+1, box.IpapiObj.CountryCode, box.IpapiObj.Org, Transport.Type, mode, TLSSTR)),
+			strings.ToUpper(fmt.Sprintf("%d %s %s %s %s %s", db.TotalAccount+len(queries)+1, helper.CCToEmoji(box.IpapiObj.CountryCode), box.IpapiObj.Org, Transport.Type, mode, TLSSTR)),
 			mode,
 			box.IpapiObj.CountryCode,
 			box.IpapiObj.Region,
