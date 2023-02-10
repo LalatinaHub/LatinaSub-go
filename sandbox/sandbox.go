@@ -88,7 +88,7 @@ func Test(link string) *SandBox {
 
 	for _, t := range populateType {
 		mode, ipapi := func(link, t string) (string, ipapi.Ipapi) {
-			defer helper.CatchError(true)
+			defer helper.CatchError(false)
 			return worker(link, t)
 		}(link, t)
 

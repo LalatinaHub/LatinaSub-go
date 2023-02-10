@@ -39,6 +39,8 @@ func Start() int {
 		}
 	}
 
+	fmt.Println("Total concurrent:", Concurrent)
+
 	// Initialize all required modules
 	initAll()
 	ch := make(chan int, Concurrent)
@@ -88,6 +90,7 @@ func Start() int {
 
 	// Log collapsed time
 	fmt.Println("Total time collapsed:", time.Since(start))
+	fmt.Println("Total accounts:", db.TotalAccount)
 
 	return db.TotalAccount
 }
