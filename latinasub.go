@@ -3,6 +3,7 @@ package latinasub
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -18,7 +19,7 @@ import (
 )
 
 var (
-	Concurrent int = 300
+	Concurrent int = runtime.NumCPU() * 100
 	wg         sync.WaitGroup
 	GoodBoxes  []*sandbox.SandBox
 )
