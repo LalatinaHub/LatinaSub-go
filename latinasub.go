@@ -2,6 +2,8 @@ package latinasub
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -16,9 +18,7 @@ import (
 )
 
 var (
-	// concurrent int      = helper.GetFreePortsLength() - 100 // Calculate concurrent
-	Concurrent int      = 300
-	ch         chan int = make(chan int, Concurrent)
+	Concurrent int = 300
 	wg         sync.WaitGroup
 	GoodBoxes  []*sandbox.SandBox
 )
@@ -32,8 +32,16 @@ func initAll() {
 
 func Start() int {
 	start := time.Now()
+
+	if concurrentStr, isSet := os.LookupEnv("CONCURRENT"); isSet {
+		if cr, _ := strconv.Atoi(concurrentStr); cr > 0 {
+			Concurrent = cr
+		}
+	}
+
 	// Initialize all required modules
 	initAll()
+	ch := make(chan int, Concurrent)
 	db := D.New()
 
 	// Merge sub list
