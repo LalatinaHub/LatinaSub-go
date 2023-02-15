@@ -90,6 +90,7 @@ func Start() int {
 	blacklist.Write()
 
 	// Log collapsed time
+	fmt.Println("Total CPU:", runtime.NumCPU())
 	fmt.Println("Total time collapsed:", time.Since(start))
 	fmt.Println("Total accounts:", db.TotalAccount)
 
