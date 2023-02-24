@@ -22,7 +22,7 @@ var (
 
 	subList []string = []string{
 		"https://raw.githubusercontent.com/LalatinaHub/Mineral/master/result/sub.json",
-		"https://raw.githubusercontent.com/mahdibland/ShadowsocksAggregator/master/sub/sub_list.json",
+		"https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_list.json",
 		"https://raw.githubusercontent.com/paimonhub/Paimonnode/main/sublist.txt",
 	}
 
