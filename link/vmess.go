@@ -151,6 +151,8 @@ func (l *Vmess) Parse(u *url.URL) error {
 		l.Transport = C.V2RayTransportTypeWebsocket
 	case "http":
 		l.Transport = C.V2RayTransportTypeHTTP
+	case "grpc":
+		l.Transport = C.V2RayTransportTypeGRPC
 	}
 
 	return nil
