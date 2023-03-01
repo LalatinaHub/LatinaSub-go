@@ -16,7 +16,7 @@ func Init() {
 	// Check and create dir "blacklist/list/"
 	if _, err := os.Stat(BlacklistPath); err != nil {
 		if os.IsNotExist(err) {
-			os.Mkdir(BlacklistPath, os.ModePerm)
+			os.MkdirAll(BlacklistPath, os.ModePerm)
 		} else {
 			log.Panic(err)
 		}
