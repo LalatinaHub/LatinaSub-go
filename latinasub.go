@@ -81,10 +81,10 @@ func Start() int {
 					fmt.Printf("[%d/%d] Connected in %s mode\n", id, numNodes, strings.Join(box.ConnectMode, " and "))
 				} else {
 					// Blacklist unused node
-					if !blacklist.Find(node) {
-						blacklist.Save(node)
-						fmt.Printf("[%d/%d] Blacklisted\n", id, numNodes)
-					}
+					// if !blacklist.Find(node) {
+					// 	blacklist.Save(node)
+					// 	fmt.Printf("[%d/%d] Blacklisted\n", id, numNodes)
+					// }
 				}
 			}
 		}(node, numNodes, i)
