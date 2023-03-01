@@ -12,7 +12,6 @@ import (
 	"sync"
 	"time"
 
-	// "github.com/LalatinaHub/LatinaSub-go/blacklist"
 	"github.com/LalatinaHub/LatinaSub-go/helper"
 	"github.com/LalatinaHub/LatinaSub-go/subscription"
 )
@@ -23,7 +22,7 @@ var (
 	maxNodes        int      = -1
 	wg              sync.WaitGroup
 
-	acceptedProtocol []string       = []string{"vmess", "ss", "ssr", "trojan", "vless"}
+	acceptedProtocol []string       = []string{"vmess", "ss", "trojan", "vless" /*,"ssr"*/}
 	protocolPattern  *regexp.Regexp = regexp.MustCompile(fmt.Sprintf("(%s)://.+", strings.Join(acceptedProtocol, "|")))
 	subFile          []subscription.SubStruct
 
@@ -40,13 +39,8 @@ func worker(subUrl string) []string {
 
 	resp, err := client.Get(subUrl)
 	if err != nil {
-		// if !os.IsTimeout(err) {
-		// blacklist.Save("sub", *subUrl)
-		// }
-
 		return []string{}
 	} else if resp.StatusCode != 200 {
-		// blacklist.Save("sub", *subUrl)
 		return []string{}
 	}
 

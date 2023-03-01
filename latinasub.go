@@ -55,6 +55,12 @@ func Start() int {
 	numNodes := len(nodes)
 	for i, node := range nodes {
 		fmt.Println("Testing node no", i, "/", len(nodes))
+
+		// Blacklist guard
+		if blacklist.Find(node) {
+			continue
+		}
+
 		wg.Add(1)
 
 		ch <- 1
@@ -73,6 +79,12 @@ func Start() int {
 				if len(box.ConnectMode) > 0 {
 					GoodBoxes = append(GoodBoxes, box)
 					fmt.Printf("[%d/%d] Connected in %s mode\n", id, numNodes, strings.Join(box.ConnectMode, " and "))
+				} else {
+					// Blacklist unused node
+					if !blacklist.Find(node) {
+						blacklist.Save(node)
+						fmt.Printf("[%d/%d] Blacklisted\n", id, numNodes)
+					}
 				}
 			}
 		}(node, numNodes, i)
@@ -81,13 +93,14 @@ func Start() int {
 	// Wait for all process
 	wg.Wait()
 
+	// Write blacklist
+	fmt.Println("Saving blacklisted nodes, please wait !")
+	blacklist.Write()
+
 	// Write all result to database
 	fmt.Println("Saving result to database, please wait !")
 	db.FlushAndCreate()
 	db.Save(GoodBoxes)
-
-	// Write blacklist
-	blacklist.Write()
 
 	// Log collapsed time
 	fmt.Println("Total CPU:", runtime.NumCPU())

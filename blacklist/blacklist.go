@@ -1,16 +1,15 @@
 package blacklist
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
 )
 
 var (
-	BlacklistPath                                      string = "blacklist/list/"
-	BlacklistNodeByte, BlacklistSubByte, BlacklistByte []byte
-	BlacklistPtr                                       *[]byte
+	BlacklistPath string = "blacklist/list/"
+	BlacklistFile string = BlacklistPath + "nodes"
+	BlacklistByte []byte
 )
 
 func Init() {
@@ -23,36 +22,20 @@ func Init() {
 		}
 	}
 
-	// Check and create sub file
-	if _, err := os.Stat(BlacklistPath + "sub"); err != nil {
+	// Check and create nodes file
+	if _, err := os.Stat(BlacklistFile); err != nil {
 		if os.IsNotExist(err) {
-			file, _ := os.Create(BlacklistPath + "sub")
-			defer file.Close()
-		}
-	}
-
-	// Check and create node file
-	if _, err := os.Stat(BlacklistPath + "node"); err != nil {
-		if os.IsNotExist(err) {
-			file, _ := os.Create(BlacklistPath + "node")
+			file, _ := os.Create(BlacklistFile)
 			defer file.Close()
 		}
 	}
 
 	// Read blacklist file
-	BlacklistNodeByte, _ = os.ReadFile(BlacklistPath + "node")
-	BlacklistSubByte, _ = os.ReadFile(BlacklistPath + "sub")
+	BlacklistByte, _ = os.ReadFile(BlacklistFile)
 }
 
-func Find(blacklistType, value string) bool {
-	// Assign pointer
-	if blacklistType == "node" {
-		BlacklistPtr = &BlacklistNodeByte
-	} else {
-		BlacklistPtr = &BlacklistSubByte
-	}
-
-	for _, blacklisted := range strings.Split(string(*BlacklistPtr), "\n") {
+func Find(value string) bool {
+	for _, blacklisted := range strings.Split(string(BlacklistByte), "\n") {
 		if blacklisted == value {
 			return true
 		}
@@ -61,21 +44,14 @@ func Find(blacklistType, value string) bool {
 	return false
 }
 
-func Save(blacklistType, value string) {
-	if Find(blacklistType, value) {
-		return
-	}
-
-	if len(*BlacklistPtr) > 0 {
-		*BlacklistPtr = append(*BlacklistPtr, []byte("\n"+value)...)
+func Save(value string) {
+	if len(BlacklistByte) > 0 {
+		BlacklistByte = append(BlacklistByte, []byte("\n"+value)...)
 	} else {
-		*BlacklistPtr = []byte(value)
+		BlacklistByte = []byte(value)
 	}
-
-	fmt.Println(fmt.Sprintf("[blacklist] %s blacklisted!", value))
 }
 
 func Write() {
-	os.WriteFile(BlacklistPath+"node", BlacklistNodeByte, os.ModePerm)
-	os.WriteFile(BlacklistPath+"sub", BlacklistSubByte, os.ModePerm)
+	os.WriteFile(BlacklistFile, BlacklistByte, os.ModePerm)
 }
