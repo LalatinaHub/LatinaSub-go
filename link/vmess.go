@@ -104,7 +104,7 @@ func (v *Vmess) Options() *option.Outbound {
 	case C.V2RayTransportTypeQUIC:
 		// do nothing
 	case C.V2RayTransportTypeGRPC:
-		opt.GRPCOptions.ServiceName = v.Host
+		opt.GRPCOptions.ServiceName = v.TransportPath
 	}
 
 	out.VMessOptions.Transport = opt
