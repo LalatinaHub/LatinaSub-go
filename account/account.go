@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	cdnHost string = "speed.cloudflare.com"
+	cdnHost string = "172.67.73.39"
 	sniHost string = "safebrowsing.google.com"
 )
 

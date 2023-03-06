@@ -18,8 +18,8 @@ func generateConfig(out *option.Outbound) (option.Options, uint) {
 		},
 		Inbounds: []option.Inbound{
 			{
-				Type: C.TypeSocks,
-				SocksOptions: option.SocksInboundOptions{
+				Type: C.TypeMixed,
+				MixedOptions: option.HTTPMixedInboundOptions{
 					ListenOptions: option.ListenOptions{
 						Listen:     option.ListenAddress(netip.IPv4Unspecified()),
 						ListenPort: uint16(listenPort),

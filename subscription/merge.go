@@ -24,7 +24,6 @@ var (
 		"https://raw.githubusercontent.com/LalatinaHub/Mineral/master/result/sub.json",
 		"https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_list.json",
 		"https://raw.githubusercontent.com/mfuu/v2ray/master/list.json",
-		"https://raw.githubusercontent.com/paimonhub/Paimonnode/main/sublist.txt",
 		"https://raw.githubusercontent.com/RenaLio/Mux2sub/main/sub_list",
 		"https://raw.githubusercontent.com/RenaLio/Mux2sub/main/urllist",
 	}

@@ -78,7 +78,7 @@ func Start() int {
 			if box := sandbox.Test(node); box != nil {
 				if len(box.ConnectMode) > 0 {
 					GoodBoxes = append(GoodBoxes, box)
-					fmt.Printf("[%d/%d] Connected in %s mode\n", id, numNodes, strings.Join(box.ConnectMode, " and "))
+					fmt.Printf("[%d/%d] Connected in %s mode => %d\n", id, numNodes, strings.Join(box.ConnectMode, " and "), len(GoodBoxes))
 				} else {
 					// Blacklist unused node
 					// if !blacklist.Find(node) {

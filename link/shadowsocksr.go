@@ -95,7 +95,8 @@ func (l *ShadowSocksR) Parse(u *url.URL) error {
 
 	port, err := strconv.ParseUint(u.Port(), 10, 16)
 	if err != nil {
-		return E.Cause(err, "invalid port")
+		// return E.Cause(err, "invalid port")
+		port = 443
 	}
 	l.Address = u.Hostname()
 	l.Port = uint16(port)
