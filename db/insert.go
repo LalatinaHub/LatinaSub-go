@@ -12,29 +12,21 @@ import (
 	"github.com/sagernet/sing-box/option"
 )
 
-func (db *DB) Save(boxes []*sandbox.SandBox) {
-	var (
-		values []string
-	)
+func (db *DB) Save(box *sandbox.SandBox) {
+	values := db.buildValuesQuery(box)
 
-	db.TotalAccount = 0
-	for _, box := range boxes {
-		for _, value := range db.buildValuesQuery(box) {
-			if value != "" {
-				values = append(values, value)
-				db.TotalAccount++
-			}
+	for _, value := range values {
+		if value == "" {
+			continue
 		}
-	}
 
-	_, err := db.conn.Exec(fmt.Sprintf("INSERT INTO proxies VALUES %s", strings.Join(values, ", ")))
-	if err != nil {
-		fmt.Println("[DB] Failed to save accounts !")
-		fmt.Println("[DB] Message:", err.Error())
-		fmt.Println("[DB] Retrying ...")
-		db.Save(boxes)
-	} else {
-		fmt.Println("[DB] Accounts saved !")
+		_, err := db.conn.Exec(fmt.Sprintf("INSERT INTO proxies VALUES %s", value))
+		if err != nil {
+			fmt.Println("[DB] Failed to save accounts !")
+			fmt.Println("[DB] Message:", err.Error())
+		} else {
+			db.TotalAccount++
+		}
 	}
 }
 
@@ -104,16 +96,16 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 			outbound.Server,
 			outbound.ServerPort,
 			outbound.UUID,
-			"", // password
-			outbound.Security,
-			outbound.AlterId,
-			"", // Method
-			"", // Plugin
-			"", // Plugin Opts
-			"", // Protocol
-			"", // Protocol Opts
-			"", // OBFS
-			"", // OBFS Param
+			"",     // password
+			"auto", // Security
+			0,      // Alter ID
+			"",     // Method
+			"",     // Plugin
+			"",     // Plugin Opts
+			"",     // Protocol
+			"",     // Protocol Opts
+			"",     // OBFS
+			"",     // OBFS Param
 		}
 	case C.TypeTrojan:
 		outbound := anyOutbound.(option.TrojanOutboundOptions)
