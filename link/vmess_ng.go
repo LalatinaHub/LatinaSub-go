@@ -81,8 +81,8 @@ func (l *Vmess) Parse(u *url.URL) error {
 	} else {
 		l.TLSAllowInsecure = false
 	}
+	l.SNI = v.SNI
 	// _ = v.Type
-	// _ = v.SNI
 	// _ = v.ALPN
 
 	switch v.Net {

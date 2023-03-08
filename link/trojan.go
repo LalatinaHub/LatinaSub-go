@@ -31,17 +31,37 @@ type Trojan struct {
 	Port            uint16
 	Remarks         string
 	AllownInsecure  bool
-	TFO             bool
 	TLS             bool
 	TransportPath   string
 	GrpcServiceName string
 	Host            string
-	ServerName      string
+	SNI             string
 	Type            string
 }
 
 // Options implements Link
 func (l *Trojan) Options() *option.Outbound {
+	out := &option.Outbound{
+		Type: C.TypeTrojan,
+		Tag:  l.Remarks,
+		TrojanOptions: option.TrojanOutboundOptions{
+			ServerOptions: option.ServerOptions{
+				Server:     l.Address,
+				ServerPort: l.Port,
+			},
+			Password: l.Password,
+		},
+	}
+
+	if l.TLS {
+		out.TrojanOptions.TLS = &option.OutboundTLSOptions{
+			Enabled:    l.TLS,
+			ServerName: l.SNI,
+			Insecure:   l.AllownInsecure,
+			DisableSNI: false,
+		}
+	}
+
 	transport := &option.V2RayTransportOptions{
 		Type: l.Type,
 	}
@@ -69,26 +89,9 @@ func (l *Trojan) Options() *option.Outbound {
 		transport = nil
 	}
 
-	return &option.Outbound{
-		Type: C.TypeTrojan,
-		Tag:  l.Remarks,
-		TrojanOptions: option.TrojanOutboundOptions{
-			ServerOptions: option.ServerOptions{
-				Server:     l.Address,
-				ServerPort: l.Port,
-			},
-			Password: l.Password,
-			TLS: &option.OutboundTLSOptions{
-				Enabled:    l.TLS,
-				ServerName: l.Address,
-				Insecure:   l.AllownInsecure,
-			},
-			DialerOptions: option.DialerOptions{
-				TCPFastOpen: l.TFO,
-			},
-			Transport: transport,
-		},
-	}
+	out.TrojanOptions.Transport = transport
+
+	return out
 }
 
 // Parse implements Link
@@ -119,13 +122,6 @@ func (l *Trojan) Parse(u *url.URL) error {
 			default:
 				l.AllownInsecure = true
 			}
-		case "tfo":
-			switch values[0] {
-			case "0":
-				l.TFO = false
-			default:
-				l.TFO = true
-			}
 		case "security":
 			switch values[0] {
 			case "":
@@ -142,7 +138,7 @@ func (l *Trojan) Parse(u *url.URL) error {
 		case "host":
 			l.Host = values[0]
 		case "sni":
-			l.ServerName = values[0]
+			l.SNI = values[0]
 		case "path":
 			l.TransportPath = values[0]
 		case "servicename":

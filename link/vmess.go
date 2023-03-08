@@ -16,6 +16,7 @@ type Vmess struct {
 	Transport        string
 	TransportPath    string
 	Host             string
+	SNI              string
 	TLS              bool
 	TLSAllowInsecure bool
 	Ver              string
@@ -39,39 +40,45 @@ func (v *Vmess) Options() *option.Outbound {
 
 	if v.TLS {
 		out.VMessOptions.TLS = &option.OutboundTLSOptions{
-			Enabled:    true,
+			Enabled:    v.TLS,
 			Insecure:   v.TLSAllowInsecure,
-			ServerName: v.Host,
+			ServerName: v.SNI,
+			DisableSNI: false,
+		}
+
+		if v.SNI == "" {
+			out.VMessOptions.TLS.ServerName = v.Host
 		}
 	}
 
-	opt := &option.V2RayTransportOptions{
+	transport := &option.V2RayTransportOptions{
 		Type: v.Transport,
 	}
 
 	switch v.Transport {
 	case C.V2RayTransportTypeHTTP:
-		opt.HTTPOptions.Path = v.TransportPath
+		transport.HTTPOptions.Path = v.TransportPath
 		if v.Host != "" {
-			opt.HTTPOptions.Host = []string{v.Host}
-			if opt.HTTPOptions.Headers == nil {
-				opt.HTTPOptions.Headers = map[string]string{}
+			transport.HTTPOptions.Host = []string{v.Host}
+			if transport.HTTPOptions.Headers == nil {
+				transport.HTTPOptions.Headers = map[string]string{}
 			}
-			opt.HTTPOptions.Headers["Host"] = v.Host
+			transport.HTTPOptions.Headers["Host"] = v.Host
 		}
 	case C.V2RayTransportTypeWebsocket:
-		opt.WebsocketOptions.Path = v.TransportPath
-		opt.WebsocketOptions.Headers = map[string]string{
+		transport.WebsocketOptions.Path = v.TransportPath
+		transport.WebsocketOptions.Headers = map[string]string{
 			"Host": v.Host,
 		}
 	case C.V2RayTransportTypeQUIC:
 		// do nothing
 	case C.V2RayTransportTypeGRPC:
-		opt.GRPCOptions.ServiceName = v.TransportPath
+		transport.GRPCOptions.ServiceName = v.TransportPath
 	default:
-		opt = nil
+		transport = nil
 	}
 
-	out.VMessOptions.Transport = opt
+	out.VMessOptions.Transport = transport
+
 	return out
 }
