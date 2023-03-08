@@ -42,6 +42,33 @@ type Trojan struct {
 
 // Options implements Link
 func (l *Trojan) Options() *option.Outbound {
+	transport := &option.V2RayTransportOptions{
+		Type: l.Type,
+	}
+
+	switch l.Type {
+	case C.V2RayTransportTypeHTTP:
+		transport.HTTPOptions.Path = l.TransportPath
+		if l.Host != "" {
+			transport.HTTPOptions.Host = []string{l.Host}
+			if transport.HTTPOptions.Headers == nil {
+				transport.HTTPOptions.Headers = map[string]string{}
+			}
+			transport.HTTPOptions.Headers["Host"] = l.Host
+		}
+	case C.V2RayTransportTypeWebsocket:
+		transport.WebsocketOptions.Path = l.TransportPath
+		transport.WebsocketOptions.Headers = map[string]string{
+			"Host": l.Host,
+		}
+	case C.V2RayTransportTypeQUIC:
+		// do nothing
+	case C.V2RayTransportTypeGRPC:
+		transport.GRPCOptions.ServiceName = l.GrpcServiceName
+	default:
+		transport = nil
+	}
+
 	return &option.Outbound{
 		Type: C.TypeTrojan,
 		Tag:  l.Remarks,
@@ -59,6 +86,7 @@ func (l *Trojan) Options() *option.Outbound {
 			DialerOptions: option.DialerOptions{
 				TCPFastOpen: l.TFO,
 			},
+			Transport: transport,
 		},
 	}
 }
@@ -121,35 +149,6 @@ func (l *Trojan) Parse(u *url.URL) error {
 			l.GrpcServiceName = values[0]
 		}
 	}
-
-	opt := &option.V2RayTransportOptions{
-		Type: l.Type,
-	}
-
-	switch l.Type {
-	case "":
-		opt = nil
-	case C.V2RayTransportTypeHTTP:
-		opt.HTTPOptions.Path = l.TransportPath
-		if l.Host != "" {
-			opt.HTTPOptions.Host = []string{l.Host}
-			if opt.HTTPOptions.Headers == nil {
-				opt.HTTPOptions.Headers = map[string]string{}
-			}
-			opt.HTTPOptions.Headers["Host"] = l.Host
-		}
-	case C.V2RayTransportTypeWebsocket:
-		opt.WebsocketOptions.Path = l.TransportPath
-		opt.WebsocketOptions.Headers = map[string]string{
-			"Host": l.Host,
-		}
-	case C.V2RayTransportTypeQUIC:
-		// do nothing
-	case C.V2RayTransportTypeGRPC:
-		opt.GRPCOptions.ServiceName = l.TransportPath
-	}
-
-	l.Options().TrojanOptions.Transport = opt
 
 	return nil
 }
