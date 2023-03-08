@@ -100,9 +100,7 @@ func Start() int {
 	// Write all result to database
 	fmt.Println("Saving result to database, please wait !")
 	db.FlushAndCreate()
-	for _, box := range GoodBoxes {
-		db.Save(box)
-	}
+	db.Save(GoodBoxes)
 
 	// Log collapsed time
 	fmt.Println("Total CPU:", runtime.NumCPU())
