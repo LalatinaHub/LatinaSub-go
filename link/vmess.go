@@ -50,8 +50,6 @@ func (v *Vmess) Options() *option.Outbound {
 	}
 
 	switch v.Transport {
-	case "":
-		opt = nil
 	case C.V2RayTransportTypeHTTP:
 		opt.HTTPOptions.Path = v.TransportPath
 		if v.Host != "" {
@@ -70,6 +68,8 @@ func (v *Vmess) Options() *option.Outbound {
 		// do nothing
 	case C.V2RayTransportTypeGRPC:
 		opt.GRPCOptions.ServiceName = v.TransportPath
+	default:
+		opt = nil
 	}
 
 	out.VMessOptions.Transport = opt
