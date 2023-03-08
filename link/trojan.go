@@ -127,6 +127,8 @@ func (l *Trojan) Parse(u *url.URL) error {
 	}
 
 	switch l.Type {
+	case "":
+		opt = nil
 	case C.V2RayTransportTypeHTTP:
 		opt.HTTPOptions.Path = l.TransportPath
 		if l.Host != "" {
@@ -145,8 +147,6 @@ func (l *Trojan) Parse(u *url.URL) error {
 		// do nothing
 	case C.V2RayTransportTypeGRPC:
 		opt.GRPCOptions.ServiceName = l.TransportPath
-	default:
-		opt = nil
 	}
 
 	l.Options().TrojanOptions.Transport = opt
