@@ -31,7 +31,7 @@ func initAll() {
 	blacklist.Init()
 }
 
-func Start() int {
+func Start(nodes []string) int {
 	start := time.Now()
 
 	if concurrentStr, isSet := os.LookupEnv("CONCURRENT"); isSet {
@@ -47,12 +47,15 @@ func Start() int {
 	ch := make(chan int, Concurrent)
 	db := D.New()
 
-	// Merge sub list
-	subscription.Merge()
+	// Scrape nodes from sub list if parameter is empty
+	if len(nodes) <= 0 {
+		// Merge sub list
+		subscription.Merge()
 
-	// Scrape nodes from sub list
-	nodes := scraper.Run()
+		nodes = scraper.Run()
+	}
 	numNodes := len(nodes)
+
 	for i, node := range nodes {
 		fmt.Println("Testing node no", i, "/", len(nodes))
 
