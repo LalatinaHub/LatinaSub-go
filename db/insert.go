@@ -12,6 +12,10 @@ import (
 	"github.com/sagernet/sing-box/option"
 )
 
+var (
+	retryCount int
+)
+
 func (db *DB) Save(boxes []*sandbox.SandBox) {
 	var (
 		values []string
@@ -31,8 +35,15 @@ func (db *DB) Save(boxes []*sandbox.SandBox) {
 	if err != nil {
 		fmt.Println("[DB] Failed to save accounts !")
 		fmt.Println("[DB] Message:", err.Error())
-		fmt.Println("[DB] Retrying ...")
-		db.Save(boxes)
+
+		if retryCount < 3 {
+			retryCount++
+
+			fmt.Println("[DB] Retrying ...")
+			db.Save(boxes)
+		}
+
+		fmt.Println("[DB] Retry attempt exceeded !")
 	} else {
 		fmt.Println("[DB] Accounts saved !")
 	}

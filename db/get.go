@@ -7,7 +7,12 @@ import (
 
 func (db *DB) Get(filter string) []DBScheme {
 	query := fmt.Sprintf(`SELECT * FROM proxies %s`, filter)
-	rows, _ := db.conn.Query(query)
+	rows, err := db.conn.Query(query)
+	if err != nil {
+		fmt.Println(err)
+
+		return []DBScheme{}
+	}
 	defer rows.Close()
 
 	return toJson(rows)
@@ -15,6 +20,10 @@ func (db *DB) Get(filter string) []DBScheme {
 
 func toJson(rows *sql.Rows) []DBScheme {
 	var result []DBScheme
+
+	if rows == nil {
+		return result
+	}
 
 	for rows.Next() {
 		var (
