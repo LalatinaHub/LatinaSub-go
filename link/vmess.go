@@ -66,6 +66,9 @@ func (v *Vmess) Options() *option.Outbound {
 			transport.HTTPOptions.Headers["Host"] = v.Host
 		}
 	case C.V2RayTransportTypeWebsocket:
+		if v.TransportPath == "" {
+			v.TransportPath = "/"
+		}
 		transport.WebsocketOptions.Path = v.TransportPath
 		transport.WebsocketOptions.Headers = map[string]string{
 			"Host": v.Host,

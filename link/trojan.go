@@ -77,6 +77,9 @@ func (l *Trojan) Options() *option.Outbound {
 			transport.HTTPOptions.Headers["Host"] = l.Host
 		}
 	case C.V2RayTransportTypeWebsocket:
+		if l.TransportPath == "" {
+			l.TransportPath = "/"
+		}
 		transport.WebsocketOptions.Path = l.TransportPath
 		transport.WebsocketOptions.Headers = map[string]string{
 			"Host": l.Host,
