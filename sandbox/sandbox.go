@@ -45,7 +45,7 @@ func worker(link, connectMode string) (string, ipapi.Ipapi) {
 		options, listenPort = generateConfig(acc.PopulateSNI())
 	}
 
-	box, err := B.New(context.Background(), options)
+	box, err := B.New(context.Background(), options, nil)
 	if err != nil {
 		panic(err)
 	}
