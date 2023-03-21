@@ -12,13 +12,10 @@ import (
 	"github.com/sagernet/sing-box/option"
 )
 
-var (
-	retryCount int
-)
-
 func (db *DB) Save(boxes []*sandbox.SandBox) {
 	var (
 		values []string
+		err    error
 	)
 
 	db.TotalAccount = 0
@@ -31,21 +28,49 @@ func (db *DB) Save(boxes []*sandbox.SandBox) {
 		}
 	}
 
-	_, err := db.conn.Exec(fmt.Sprintf("INSERT INTO proxies VALUES %s", strings.Join(values, ", ")))
-	if err != nil {
-		fmt.Println("[DB] Failed to save accounts !")
-		fmt.Println("[DB] Message:", err.Error())
+	query := fmt.Sprintf(`INSERT INTO proxies (
+		SERVER,
+		SERVER_PORT,
+		UUID, PASSWORD,
+		SECURITY,
+		ALTER_ID,
+		METHOD,
+		PLUGIN,
+		PLUGIN_OPTS,
+		PROTOCOL,
+		PROTOCOL_PARAM,
+		OBFS,
+		OBFS_PARAM,
+		HOST,
+		TLS,
+		TRANSPORT,
+		PATH,
+		SERVICE_NAME,
+		INSECURE,
+		SNI,
+		REMARK,
+		CONN_MODE,
+		COUNTRY_CODE,
+		REGION,
+		ORG,
+		VPN
+	) VALUES %s`, strings.ReplaceAll(strings.Join(values, ", "), `"`, "'"))
 
-		if retryCount < 3 {
-			retryCount++
+	for i := 0; i < 3; i++ {
+		_, err = db.conn.Exec(query)
 
+		if err != nil {
+			fmt.Println("[DB] Failed to save accounts !")
+			fmt.Println("[DB] Message:", err.Error())
 			fmt.Println("[DB] Retrying ...")
-			db.Save(boxes)
+		} else {
+			fmt.Println("[DB] Accounts saved !")
+			break
 		}
 
-		fmt.Println("[DB] Retry attempt exceeded !")
-	} else {
-		fmt.Println("[DB] Accounts saved !")
+		if i >= 2 {
+			fmt.Println("[DB] Retry attempt exceeded !")
+		}
 	}
 }
 

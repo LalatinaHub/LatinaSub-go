@@ -3,16 +3,9 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 
-	_ "github.com/mattn/go-sqlite3"
-)
-
-var (
-	DbPath string = "result/"
-	DbName string = "db.sqlite"
-	DbFile string = DbPath + DbName
+	_ "github.com/lib/pq"
 )
 
 type DB struct {
@@ -29,7 +22,8 @@ func New() *DB {
 }
 
 func (db *DB) connect() *sql.DB {
-	conn, _ := sql.Open("sqlite3", DbFile)
+	connStr := os.Getenv("DB_URL")
+	conn, _ := sql.Open("postgres", connStr)
 	return conn
 }
 
@@ -57,37 +51,35 @@ func (db *DB) isExists(values []any) bool {
 }
 
 func (db *DB) FlushAndCreate() {
-	// Remove previous database
-	if file, _ := os.Stat(DbFile); file != nil {
-		os.Remove(DbFile)
-	}
+	// Flush previous data
+	_, _ = db.conn.Exec("TRUNCATE proxies;")
 
 	query := `CREATE TABLE IF NOT EXISTS proxies (
 		SERVER VARCHAR,
 		SERVER_PORT INTEGER,
-		UUID VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		PASSWORD VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		SECURITY VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		ALTER_ID INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 0,
-		METHOD VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		PLUGIN VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		PLUGIN_OPTS VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		PROTOCOL VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		PROTOCOL_PARAM VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		OBFS VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		OBFS_PARAM VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		HOST VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		TLS INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
-		TRANSPORT VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		PATH VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		SERVICE_NAME VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
-		INSECURE INTEGER NOT NULL ON CONFLICT REPLACE DEFAULT 1,
-		SNI VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "",
+		UUID VARCHAR,
+		PASSWORD VARCHAR,
+		SECURITY VARCHAR,
+		ALTER_ID INTEGER,
+		METHOD VARCHAR,
+		PLUGIN VARCHAR,
+		PLUGIN_OPTS VARCHAR,
+		PROTOCOL VARCHAR,
+		PROTOCOL_PARAM VARCHAR,
+		OBFS VARCHAR,
+		OBFS_PARAM VARCHAR,
+		HOST VARCHAR,
+		TLS INTEGER,
+		TRANSPORT VARCHAR,
+		PATH VARCHAR,
+		SERVICE_NAME VARCHAR,
+		INSECURE INTEGER,
+		SNI VARCHAR,
 		REMARK VARCHAR,
 		CONN_MODE VARCHAR,
-		COUNTRY_CODE VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "XX",
-		REGION VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "Unknown",
-		ORG VARCHAR NOT NULL ON CONFLICT REPLACE DEFAULT "VPS",
+		COUNTRY_CODE VARCHAR,
+		REGION VARCHAR,
+		ORG VARCHAR,
 		VPN VARCHAR
 	)`
 
@@ -95,16 +87,5 @@ func (db *DB) FlushAndCreate() {
 		fmt.Println("[DB] Database successfully created !")
 	} else {
 		panic(err.Error())
-	}
-}
-
-func Init() {
-	// Check and create dir "result/"
-	if _, err := os.Stat(DbPath); err != nil {
-		if os.IsNotExist(err) {
-			os.Mkdir(DbPath, os.ModePerm)
-		} else {
-			log.Panic(err)
-		}
 	}
 }

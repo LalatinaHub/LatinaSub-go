@@ -25,8 +25,6 @@ var (
 )
 
 func initAll() {
-	D.Init()
-
 	subscription.Init()
 	blacklist.Init()
 }

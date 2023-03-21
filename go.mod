@@ -3,7 +3,7 @@ module github.com/LalatinaHub/LatinaSub-go
 go 1.19
 
 require (
-	github.com/mattn/go-sqlite3 v1.14.16
+	github.com/lib/pq v1.10.7
 	github.com/sagernet/sing v0.1.7-0.20230122083756-439ecb1a20b5
 	github.com/sagernet/sing-box v1.1.5-0.20230202083655-96d4ca79ca36
 )
