@@ -8,6 +8,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var (
+	conn *sql.DB
+)
+
 type DB struct {
 	TotalAccount int
 	uniqueIds    []string
@@ -16,8 +20,11 @@ type DB struct {
 
 func New() *DB {
 	db := DB{}
-	db.conn = db.connect()
+	if conn == nil {
+		conn = db.connect()
+	}
 
+	db.conn = conn
 	return &db
 }
 
