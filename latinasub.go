@@ -19,6 +19,7 @@ import (
 )
 
 var (
+	loc, _         = time.LoadLocation("Asia/Jakarta")
 	Concurrent int = runtime.NumCPU() * 100
 	wg         sync.WaitGroup
 	GoodBoxes  []*sandbox.SandBox
@@ -107,6 +108,7 @@ func Start(nodes []string) int {
 	fmt.Println("Total CPU:", runtime.NumCPU())
 	fmt.Println("Total time collapsed:", time.Since(start))
 	fmt.Println("Total accounts:", db.TotalAccount)
+	fmt.Println("Finish Time:", time.Now().In(loc).Format("2006-01-02 15:04:05"))
 
 	return db.TotalAccount
 }
