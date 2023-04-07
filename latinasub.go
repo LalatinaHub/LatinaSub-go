@@ -101,7 +101,7 @@ func Start(nodes []string) int {
 
 	// Write all result to database
 	fmt.Println("Saving result to database, please wait !")
-	db.FlushAndCreate()
+	db.CreateTable()
 	db.Save(GoodBoxes)
 
 	// Log collapsed time

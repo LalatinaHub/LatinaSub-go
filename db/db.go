@@ -57,10 +57,7 @@ func (db *DB) isExists(values []any) bool {
 	return false
 }
 
-func (db *DB) FlushAndCreate() {
-	// Flush previous data
-	_, _ = db.conn.Exec("TRUNCATE proxies;")
-
+func (db *DB) CreateTable() {
 	query := `CREATE TABLE IF NOT EXISTS proxies (
 		SERVER VARCHAR,
 		SERVER_PORT INTEGER,

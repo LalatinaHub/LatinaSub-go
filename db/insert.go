@@ -57,7 +57,8 @@ func (db *DB) Save(boxes []*sandbox.SandBox) {
 	) VALUES %s`, strings.ReplaceAll(strings.Join(values, ", "), `"`, "'"))
 
 	for i := 0; i < 3; i++ {
-		_, err = db.conn.Exec(query)
+		transactionQuery := fmt.Sprintf(`BEGIN; TRUNCATE proxies; %s; COMMIT;`, query)
+		_, err = db.conn.Exec(transactionQuery)
 
 		if err != nil {
 			fmt.Println("[DB] Failed to save accounts !")
