@@ -27,13 +27,14 @@ func toJson(rows *sql.Rows) []DBScheme {
 
 	for rows.Next() {
 		var (
-			server, uuid, password, security, method, plugin, pluginOpts, protocol, protocolParam, obfs, obfsParam, host, transport, path, serviceName, sni, remark, connMode, countryCode, region, org, vpn string
-			serverPort, alterId                                                                                                                                                                              int
-			tls, insecure                                                                                                                                                                                    bool
+			server, ip, uuid, password, security, method, plugin, pluginOpts, protocol, protocolParam, obfs, obfsParam, host, transport, path, serviceName, sni, remark, connMode, countryCode, region, org, vpn string
+			serverPort, alterId                                                                                                                                                                                  int
+			tls, insecure                                                                                                                                                                                        bool
 		)
 
 		rows.Scan(
 			&server,
+			&ip,
 			&serverPort,
 			&uuid,
 			&password,
@@ -62,6 +63,7 @@ func toJson(rows *sql.Rows) []DBScheme {
 
 		result = append(result, DBScheme{
 			Server:        server,
+			Ip:            ip,
 			ServerPort:    serverPort,
 			UUID:          uuid,
 			Password:      password,

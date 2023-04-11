@@ -30,6 +30,7 @@ func (db *DB) Save(boxes []*sandbox.SandBox) {
 
 	query := fmt.Sprintf(`INSERT INTO proxies (
 		SERVER,
+		IP,
 		SERVER_PORT,
 		UUID, PASSWORD,
 		SECURITY,
@@ -139,6 +140,7 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 		outbound := anyOutbound.(option.VMessOutboundOptions)
 		values = []any{
 			outbound.Server,
+			box.IpapiObj.Ip,
 			outbound.ServerPort,
 			outbound.UUID,
 			"", // password
@@ -156,6 +158,7 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 		outbound := anyOutbound.(option.TrojanOutboundOptions)
 		values = []any{
 			outbound.Server,
+			box.IpapiObj.Ip,
 			outbound.ServerPort,
 			"", // UUID
 			outbound.Password,
@@ -173,6 +176,7 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 		outbound := anyOutbound.(option.VLESSOutboundOptions)
 		values = []any{
 			outbound.Server,
+			box.IpapiObj.Ip,
 			outbound.ServerPort,
 			outbound.UUID,
 			"", // Password
@@ -190,6 +194,7 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 		outbound := anyOutbound.(option.ShadowsocksOutboundOptions)
 		values = []any{
 			outbound.Server,
+			box.IpapiObj.Ip,
 			outbound.ServerPort,
 			"", // UUID
 			outbound.Password,
@@ -207,6 +212,7 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 		outbound := anyOutbound.(option.ShadowsocksROutboundOptions)
 		values = []any{
 			outbound.Server,
+			box.IpapiObj.Ip,
 			outbound.ServerPort,
 			"", // UUID
 			outbound.Password,

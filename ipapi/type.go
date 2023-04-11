@@ -2,9 +2,9 @@ package ipapi
 
 // Only used information will be parsed
 type Ipapi struct {
-	Ip          string `json:"ip,omitempty"`
+	Ip          string `json:"ip"`
 	CountryName string `json:"country_name,omitempty"`
-	CountryCode string `json:"country_code,omitempty"`
+	CountryCode string `json:"country,omitempty"`
 	Region      string `json:"region,omitempty"`
 	Org         string `json:"org,omitempty"`
 }

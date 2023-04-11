@@ -37,14 +37,19 @@ func (db *DB) connect() *sql.DB {
 func (db *DB) isExists(values []any) bool {
 	// Refer to data scheme
 	// Server Port, UUID, Password, Transport, Conn Mode, VPN
-	id := fmt.Sprintf(`%d_"%s"_"%s"_"%s"_"%s"_"%s"`, values[1], values[2], values[3], values[15], values[21], values[25])
+	id := fmt.Sprintf("%d_%s_%s_%s_%s_%s", values[2], values[3], values[4], values[16], values[22], values[26])
 
-	if values[21] == "cdn" {
-		// Host
-		id = id + fmt.Sprintf(`_"%s"`, values[13])
+	if values[1] != "" {
+		// Ip
+		id = id + fmt.Sprintf("_%s", values[1])
 	} else {
-		// Server
-		id = id + fmt.Sprintf(`_"%s"`, values[0])
+		if values[22] == "cdn" {
+			// Host
+			id = id + fmt.Sprintf("_%s", values[14])
+		} else {
+			// Server
+			id = id + fmt.Sprintf("_%s", values[0])
+		}
 	}
 
 	for _, existsId := range db.uniqueIds {
@@ -60,6 +65,7 @@ func (db *DB) isExists(values []any) bool {
 func (db *DB) CreateTable() {
 	query := `CREATE TABLE IF NOT EXISTS proxies (
 		SERVER VARCHAR,
+		IP VARCHAR,
 		SERVER_PORT INTEGER,
 		UUID VARCHAR,
 		PASSWORD VARCHAR,
