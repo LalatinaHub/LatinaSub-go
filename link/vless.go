@@ -32,11 +32,14 @@ type Vless struct {
 	Remarks         string
 	AllownInsecure  bool
 	TLS             bool
+	Reality         bool
 	TransportPath   string
 	GrpcServiceName string
 	Host            string
 	SNI             string
 	Type            string
+	PubKey          string
+	ShortId         string
 }
 
 // Options implements Link
@@ -59,6 +62,17 @@ func (l *Vless) Options() *option.Outbound {
 			ServerName: l.SNI,
 			Insecure:   l.AllownInsecure,
 			DisableSNI: false,
+		}
+
+		if l.Reality {
+			out.VLESSOptions.TLS.UTLS = &option.OutboundUTLSOptions{
+				Enabled: true,
+			}
+			out.VLESSOptions.TLS.Reality = &option.OutboundRealityOptions{
+				Enabled:   true,
+				PublicKey: l.PubKey,
+				ShortID:   l.ShortId,
+			}
 		}
 	}
 
@@ -127,11 +141,12 @@ func (l *Vless) Parse(u *url.URL) error {
 				l.AllownInsecure = true
 			}
 		case "security":
+			l.TLS = true
 			switch values[0] {
 			case "":
 				l.TLS = false
-			default:
-				l.TLS = true
+			case "reality":
+				l.Reality = true
 			}
 		case "type":
 			switch values[0] {
@@ -147,6 +162,10 @@ func (l *Vless) Parse(u *url.URL) error {
 			l.TransportPath = values[0]
 		case "servicename":
 			l.GrpcServiceName = values[0]
+		case "pbk":
+			l.PubKey = values[0]
+		case "sid":
+			l.ShortId = values[0]
 		}
 	}
 
