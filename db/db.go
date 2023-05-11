@@ -37,28 +37,28 @@ func (db *DB) connect() *sql.DB {
 func (db *DB) isExists(values []any) bool {
 	// Refer to data scheme
 	// Server Port, UUID, Password, Transport, Conn Mode, VPN
-	id := fmt.Sprintf("%d_%s_%s_%s_%s_%s", values[2], values[3], values[4], values[16], values[22], values[26])
+	uid := fmt.Sprintf("%d_%s_%s_%s_%s_%s", values[2], values[3], values[4], values[16], values[22], values[26])
 
 	if values[1] != "" {
 		// Ip
-		id = id + fmt.Sprintf("_%s", values[1])
+		uid = uid + fmt.Sprintf("_%s", values[1])
 	} else {
 		if values[22] == "cdn" {
 			// Host
-			id = id + fmt.Sprintf("_%s", values[14])
+			uid = uid + fmt.Sprintf("_%s", values[14])
 		} else {
 			// Server
-			id = id + fmt.Sprintf("_%s", values[0])
+			uid = uid + fmt.Sprintf("_%s", values[0])
 		}
 	}
 
 	for _, existsId := range db.uniqueIds {
-		if existsId == id {
+		if existsId == uid {
 			return true
 		}
 	}
 
-	db.uniqueIds = append(db.uniqueIds, id)
+	db.uniqueIds = append(db.uniqueIds, uid)
 	return false
 }
 

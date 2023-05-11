@@ -20,7 +20,7 @@ func (db *DB) Save(boxes []*sandbox.SandBox) {
 
 	db.TotalAccount = 0
 	for _, box := range boxes {
-		for _, value := range db.buildValuesQuery(box) {
+		for _, value := range db.BuildValuesQuery(box) {
 			if value != "" {
 				values = append(values, value)
 				db.TotalAccount++
@@ -76,7 +76,7 @@ func (db *DB) Save(boxes []*sandbox.SandBox) {
 	}
 }
 
-func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
+func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 	var (
 		// Re-generate outbound to get pure config (without populated host)
 		TLS         *option.OutboundTLSOptions
@@ -265,9 +265,7 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 				} else {
 					valuesString = valuesString + `0, `
 				}
-			case "int":
-				valuesString = valuesString + fmt.Sprintf(`%d, `, value)
-			case "uint16":
+			case "int", "uint16":
 				valuesString = valuesString + fmt.Sprintf(`%d, `, value)
 			default:
 				valuesString = valuesString + fmt.Sprintf(`"%s", `, value)
@@ -276,6 +274,17 @@ func (db *DB) buildValuesQuery(box *sandbox.SandBox) []string {
 
 		query := fmt.Sprintf(`(%s)`, strings.TrimSuffix(valuesString, ", "))
 		queries = append(queries, query)
+	}
+
+	if len(box.ConnectMode) <= 0 {
+		var tempValues []string
+
+		for _, value := range values {
+			tempValues = append(tempValues, fmt.Sprintf("%v", value))
+		}
+		tempValues = append(tempValues, account.Outbound.Type)
+
+		return tempValues
 	}
 
 	return queries

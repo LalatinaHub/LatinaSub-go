@@ -27,7 +27,6 @@ var (
 
 func initAll() {
 	subscription.Init()
-	blacklist.Init()
 }
 
 func Start(nodes []string) int {
@@ -58,8 +57,14 @@ func Start(nodes []string) int {
 	for i, node := range nodes {
 		fmt.Println("Testing node no", i, "/", len(nodes))
 
+		// Build uid
+		sb := sandbox.SandBox{}
+		sb.Link = node
+		uid := strings.Join(db.BuildValuesQuery(&sb), "_")
+
 		// Blacklist guard
-		if blacklist.Find(node) {
+		if blacklist.Find(uid) {
+			fmt.Printf("[%d/%d] Already scanned/blacklisted\n", i, numNodes)
 			continue
 		}
 
@@ -82,12 +87,9 @@ func Start(nodes []string) int {
 					GoodBoxes = append(GoodBoxes, box)
 					fmt.Printf("[%d/%d] Connected in %s mode => %d\n", id, numNodes, strings.Join(box.ConnectMode, " and "), len(GoodBoxes))
 				} else {
-					// Blacklist unused node
-					// if !blacklist.Find(node) {
-					// 	blacklist.Save(node)
-					// 	fmt.Printf("[%d/%d] Blacklisted\n", id, numNodes)
-					// }
+					fmt.Printf("[%d/%d] Blacklisted\n", id, numNodes)
 				}
+				blacklist.Save(uid)
 			}
 		}(node, numNodes, i)
 	}
@@ -95,9 +97,9 @@ func Start(nodes []string) int {
 	// Wait for all process
 	wg.Wait()
 
-	// Write blacklist
-	fmt.Println("Saving blacklisted nodes, please wait !")
-	blacklist.Write()
+	// Clear blacklist
+	fmt.Println("Clear blacklist")
+	blacklist.Clear()
 
 	// Write all result to database
 	fmt.Println("Saving result to database, please wait !")
