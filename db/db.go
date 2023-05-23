@@ -28,6 +28,10 @@ func New() *DB {
 	return &db
 }
 
+func (db *DB) Conn() *sql.DB {
+	return db.conn
+}
+
 func (db *DB) connect() *sql.DB {
 	connStr := os.Getenv("DB_URL")
 	conn, _ := sql.Open("postgres", connStr)
