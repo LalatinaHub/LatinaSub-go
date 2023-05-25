@@ -49,8 +49,6 @@ func (account *Account) buildOutbound() option.Outbound {
 				outbound.TrojanOptions = val.Options().TrojanOptions
 			case C.TypeShadowsocks:
 				outbound.ShadowsocksOptions = val.Options().ShadowsocksOptions
-			case C.TypeShadowsocksR:
-				outbound.ShadowsocksROptions = val.Options().ShadowsocksROptions
 			}
 		} else if err != nil {
 			fmt.Println("[Error]", err.Error())

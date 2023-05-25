@@ -68,23 +68,29 @@ func (l *ShadowSocks) Parse(u *url.URL) error {
 	l.Address = u.Hostname()
 	l.Port = uint16(port)
 	l.Ps = u.Fragment
-	queries := u.Query()
-	for key, values := range queries {
-		switch key {
-		case "plugin":
-			parts := strings.SplitN(values[0], ";", 2)
-			switch strings.ToLower(parts[0]) {
-			case "simple-obfs":
-				l.Plugin = "obfs-local"
-			default:
-				l.Plugin = parts[0]
-			}
 
-			if len(parts) == 2 {
-				l.PluginOpts = parts[1]
+	for _, query := range strings.Split(u.RawQuery, "&") {
+		if strings.HasPrefix(query, "plugin") {
+			for _, plugins := range strings.Split(query, ";") {
+				values := strings.Split(plugins, "=")
+
+				if values[0] == "plugin" {
+					if values[1] == "simple-obfs" {
+						l.Plugin = "obfs-local"
+					} else {
+						l.Plugin = values[1]
+					}
+				} else {
+					if l.PluginOpts == "" {
+						l.PluginOpts = values[0] + "=" + values[1]
+					} else {
+						l.PluginOpts = l.PluginOpts + ";" + values[0] + "=" + values[1]
+					}
+				}
 			}
 		}
 	}
+
 	if uname := u.User.Username(); uname != "" {
 		if pass, ok := u.User.Password(); ok {
 			method, err := url.QueryUnescape(uname)
