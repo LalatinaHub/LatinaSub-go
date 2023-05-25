@@ -61,17 +61,17 @@ func (v *Vmess) Options() *option.Outbound {
 		if v.Host != "" {
 			transport.HTTPOptions.Host = []string{v.Host}
 			if transport.HTTPOptions.Headers == nil {
-				transport.HTTPOptions.Headers = map[string]string{}
+				transport.HTTPOptions.Headers = map[string]option.Listable[string]{}
 			}
-			transport.HTTPOptions.Headers["Host"] = v.Host
+			transport.HTTPOptions.Headers["Host"] = option.Listable[string]{v.Host}
 		}
 	case C.V2RayTransportTypeWebsocket:
 		if v.TransportPath == "" {
 			v.TransportPath = "/"
 		}
 		transport.WebsocketOptions.Path = v.TransportPath
-		transport.WebsocketOptions.Headers = map[string]string{
-			"Host": v.Host,
+		transport.WebsocketOptions.Headers = map[string]option.Listable[string]{
+			"Host": {v.Host},
 		}
 	case C.V2RayTransportTypeQUIC:
 		// do nothing

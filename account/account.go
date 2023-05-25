@@ -49,6 +49,9 @@ func (account *Account) buildOutbound() option.Outbound {
 				outbound.TrojanOptions = val.Options().TrojanOptions
 			case C.TypeShadowsocks:
 				outbound.ShadowsocksOptions = val.Options().ShadowsocksOptions
+			case C.TypeShadowsocksR:
+				outbound.ShadowsocksROptions = val.Options().ShadowsocksROptions
+				outbound.ShadowsocksROptions.Network = option.NetworkList("udp")
 			}
 		} else if err != nil {
 			fmt.Println("[Error]", err.Error())
@@ -98,6 +101,14 @@ func (account Account) PopulateSNI() *option.Outbound {
 		account.Outbound.ShadowsocksOptions.Plugin = "obfs-local"
 		account.Outbound.ShadowsocksOptions.PluginOptions = fmt.Sprintf("obfs=%s;obfs-host=%s", obfs, sniHost)
 		return &account.Outbound
+	case C.TypeShadowsocksR:
+		var obfs = "http"
+
+		if m, _ := regexp.MatchString("tls", account.Outbound.ShadowsocksROptions.Obfs); m {
+			obfs = "tls"
+		}
+
+		account.Outbound.ShadowsocksROptions.ObfsParam = fmt.Sprintf("obfs=%s;obfs-host=%s", obfs, sniHost)
 	default:
 		return &account.Outbound
 	}

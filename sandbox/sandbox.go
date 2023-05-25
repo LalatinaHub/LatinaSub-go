@@ -45,7 +45,10 @@ func worker(link, connectMode string) (string, ipapi.Ipapi) {
 		options, listenPort = generateConfig(acc.PopulateSNI())
 	}
 
-	box, err := B.New(context.Background(), options, nil)
+	box, err := B.New(B.Options{
+		Context: context.Background(),
+		Options: options,
+	})
 	if err != nil {
 		panic(err)
 	}
@@ -87,6 +90,13 @@ func Test(link string) *SandBox {
 	sb.Link = link
 
 	for _, t := range populateType {
+		switch strings.Split(link, "://")[0] {
+		case "ssr", "ss":
+			if t == "cdn" {
+				continue
+			}
+		}
+
 		mode, ipapi := func(link, t string) (string, ipapi.Ipapi) {
 			defer helper.CatchError(false)
 			return worker(link, t)

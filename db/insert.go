@@ -84,6 +84,7 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		TLS         *option.OutboundTLSOptions
 		Transport   *option.V2RayTransportOptions
 		TLSSTR      string           = "NTLS"
+		host        string           = ""
 		account     *account.Account = account.New(box.Link)
 		anyOutbound interface{}
 		values      []any
@@ -112,6 +113,14 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 				Enabled: true,
 			}
 		}
+	case C.TypeShadowsocksR:
+		anyOutbound = account.Outbound.ShadowsocksROptions
+
+		if m, _ := regexp.MatchString("tls", account.Outbound.ShadowsocksROptions.Obfs); m {
+			TLS = &option.OutboundTLSOptions{
+				Enabled: true,
+			}
+		}
 	}
 
 	// Null safe BEGIN
@@ -131,6 +140,10 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 			HTTPOptions:      option.V2RayHTTPOptions{},
 		}
 	} else {
+		if len(Transport.WebsocketOptions.Headers["Host"]) > 0 {
+			host = Transport.WebsocketOptions.Headers["Host"][0]
+		}
+
 		switch Transport.Type {
 		case "ws", "grpc", "quic":
 		case "websocket":
@@ -215,13 +228,31 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 			"", // OBFS
 			"", // OBFS Param
 		}
+	case C.TypeShadowsocksR:
+		outbound := anyOutbound.(option.ShadowsocksROutboundOptions)
+		values = []any{
+			outbound.Server,
+			box.IpapiObj.Ip,
+			outbound.ServerPort,
+			"", // UUID
+			outbound.Password,
+			"", // Security
+			0,  // Alter ID
+			outbound.Method,
+			"", // Plugin
+			"", // Plugin Options
+			outbound.Protocol,
+			outbound.ProtocolParam,
+			outbound.Obfs,
+			outbound.ObfsParam,
+		}
 	default:
 		return queries
 	}
 
 	// Add TLS and Transport field to values
 	values = append(values, []any{
-		Transport.WebsocketOptions.Headers["Host"],
+		host,
 		TLS.Enabled,
 		Transport.Type,
 		Transport.WebsocketOptions.Path,

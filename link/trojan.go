@@ -72,17 +72,17 @@ func (l *Trojan) Options() *option.Outbound {
 		if l.Host != "" {
 			transport.HTTPOptions.Host = []string{l.Host}
 			if transport.HTTPOptions.Headers == nil {
-				transport.HTTPOptions.Headers = map[string]string{}
+				transport.HTTPOptions.Headers = map[string]option.Listable[string]{}
 			}
-			transport.HTTPOptions.Headers["Host"] = l.Host
+			transport.HTTPOptions.Headers["Host"] = option.Listable[string]{l.Host}
 		}
 	case C.V2RayTransportTypeWebsocket:
 		if l.TransportPath == "" {
 			l.TransportPath = "/"
 		}
 		transport.WebsocketOptions.Path = l.TransportPath
-		transport.WebsocketOptions.Headers = map[string]string{
-			"Host": l.Host,
+		transport.WebsocketOptions.Headers = map[string]option.Listable[string]{
+			"Host": {l.Host},
 		}
 	case C.V2RayTransportTypeQUIC:
 		// do nothing
