@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
-	"strings"
+	"strconv"
 
 	"github.com/LalatinaHub/LatinaSub-go/helper"
 	"github.com/LalatinaHub/LatinaSub-go/link"
@@ -14,7 +14,7 @@ import (
 
 var (
 	cdnHost string = "172.67.73.39"
-	sniHost string = "meet.google.com"
+	sniHost string = "teams.microsoft.com"
 )
 
 type Account struct {
@@ -87,50 +87,18 @@ func (account Account) PopulateSNI() *option.Outbound {
 		TLS = account.Outbound.VLESSOptions.TLS
 	case C.TypeTrojan:
 		TLS = account.Outbound.TrojanOptions.TLS
-	case C.TypeShadowsocks, C.TypeShadowsocksR:
+	case C.TypeShadowsocks:
 		var (
-			params        []string
-			param, param1 string
-			obfs          string = "http"
+			obfs = "tls"
+			port = int64(account.Outbound.ShadowsocksOptions.ServerPort)
 		)
 
-		// Get the parameter
-		switch account.Outbound.Type {
-		case C.TypeShadowsocks:
-			params = strings.Split(account.Outbound.ShadowsocksOptions.PluginOptions, ";")
-			param1 = account.Outbound.ShadowsocksOptions.PluginOptions
-
-		case C.TypeShadowsocksR:
-			params = strings.Split(account.Outbound.ShadowsocksROptions.ObfsParam, ";")
-			param1 = account.Outbound.ShadowsocksOptions.PluginOptions
+		if m, _ := regexp.MatchString("80|88", strconv.FormatInt(port, 10)); m {
+			obfs = "http"
 		}
 
-		if m, _ := regexp.MatchString("tls", param1); m {
-			obfs = "tls"
-		}
-
-		// Loop trough plugin-opts and change the host while left other untouched
-		for _, parts := range params {
-			vals := strings.Split(parts, "=")
-
-			if strings.HasSuffix(vals[0], "host") {
-				param = param + vals[0] + "=" + sniHost + ";"
-				continue
-			}
-			param = param + strings.Join(vals, "=") + ";"
-		}
-
-		// Remove ; at the end of opts
-		param = strings.TrimSuffix(param, ";")
-
-		// Re-assign parameter
-		switch account.Outbound.Type {
-		case C.TypeShadowsocks:
-			account.Outbound.ShadowsocksOptions.PluginOptions = param
-		case C.TypeShadowsocksR:
-			account.Outbound.ShadowsocksROptions.ObfsParam = fmt.Sprintf("obfs=%s;obfs-host=%s", obfs, sniHost)
-		}
-
+		account.Outbound.ShadowsocksOptions.Plugin = "obfs-local"
+		account.Outbound.ShadowsocksOptions.PluginOptions = fmt.Sprintf("obfs=%s;obfs-host=%s", obfs, sniHost)
 		return &account.Outbound
 	default:
 		return &account.Outbound
