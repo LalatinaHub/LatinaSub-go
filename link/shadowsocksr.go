@@ -69,7 +69,7 @@ func (l *ShadowSocksR) Parse(u *url.URL) error {
 	if err != nil {
 		return err
 	}
-	s := strings.SplitN(string(b), "/?", 2)
+	s := strings.SplitN(string(b), "?", 2)
 
 	var newLink string = "ssr://"
 	for i, value := range strings.Split(s[0], ":") {
@@ -85,7 +85,7 @@ func (l *ShadowSocksR) Parse(u *url.URL) error {
 		case 4:
 			l.Obfs = value
 		case 5:
-			l.Password = doBase64DecodeOrNothing(value) // Password
+			l.Password = doBase64DecodeOrNothing(strings.TrimSuffix(value, "/")) // Password
 		}
 	}
 	u, err = url.Parse(newLink + "/?" + s[1])
