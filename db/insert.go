@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"os"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -74,6 +75,10 @@ func (db *DB) Save(boxes []*sandbox.SandBox) {
 
 		if i >= 2 {
 			fmt.Println("[DB] Retry attempt exceeded !")
+			f, _ := os.Create("DB_QUERY.txt")
+			defer f.Close()
+
+			f.WriteString(transactionQuery)
 		}
 	}
 }
