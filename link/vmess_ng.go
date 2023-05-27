@@ -3,6 +3,7 @@ package link
 import (
 	"encoding/json"
 	"net/url"
+	"reflect"
 
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing/common"
@@ -36,12 +37,12 @@ type _vmessV2RayNG struct {
 	Aid            number `json:"aid,omitempty"`
 	Scy            string `json:"scy,omitempty"`
 	Security       string `json:"security,omitempty"`
-	SkipCertVerify any    `json:"skip-cert-verify,omitempty"` // Have 2 possibly data type
+	SkipCertVerify any    `json:"skip-cert-verify,omitempty"` // 2 possible data type
 	Net            string `json:"net,omitempty"`
 	Type           string `json:"type,omitempty"`
 	Host           string `json:"host,omitempty"`
 	Path           string `json:"path,omitempty"`
-	TLS            string `json:"tls,omitempty"`
+	TLS            any    `json:"tls,omitempty"` // 2 possible data type
 	SNI            string `json:"sni,omitempty"`
 	ALPN           string `json:"alpn,omitempty"`
 }
@@ -75,7 +76,15 @@ func (l *Vmess) Parse(u *url.URL) error {
 	}
 	l.Host = v.Host
 	l.TransportPath = v.Path
-	l.TLS = v.TLS == "tls"
+	switch reflect.TypeOf(v.TLS).Kind() {
+	case reflect.Bool:
+		l.TLS = v.TLS.(bool)
+	case reflect.String:
+		l.TLS = v.TLS.(string) == "tls"
+	default:
+		l.TLS = false
+	}
+
 	if v.SkipCertVerify != nil {
 		l.TLSAllowInsecure = true
 	} else {
