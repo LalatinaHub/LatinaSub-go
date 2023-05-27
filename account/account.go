@@ -51,7 +51,6 @@ func (account *Account) buildOutbound() option.Outbound {
 				outbound.ShadowsocksOptions = val.Options().ShadowsocksOptions
 			case C.TypeShadowsocksR:
 				outbound.ShadowsocksROptions = val.Options().ShadowsocksROptions
-				outbound.ShadowsocksROptions.Network = option.NetworkList("udp")
 			}
 		} else if err != nil {
 			fmt.Println("[Error]", err.Error())

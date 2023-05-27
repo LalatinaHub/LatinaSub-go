@@ -108,6 +108,9 @@ func (l *ShadowSocksR) Parse(u *url.URL) error {
 			l.ProtocolParam = doBase64DecodeOrNothing(values[0])
 		case "obfsparam":
 			l.ObfsParam = doBase64DecodeOrNothing(values[0])
+			if !strings.HasPrefix(l.ObfsParam, "obfs") {
+				l.ObfsParam = ""
+			}
 		case "remarks":
 			values[0] = strings.ReplaceAll(values[0], " ", "+")
 			l.Ps = doBase64DecodeOrNothing(values[0])

@@ -8,6 +8,10 @@ require (
 	github.com/sagernet/sing-box v1.2.7-0.20230520041538-9ee0f0e74e50
 )
 
+replace (
+	github.com/sagernet/sing-box => github.com/LalatinaHub/sing-box v0.0.0-20230526235814-923fb9504994
+)
+
 require (
 	berty.tech/go-libtor v1.0.385 // indirect
 	github.com/Dreamacro/clash v1.15.1 // indirect
@@ -85,3 +89,4 @@ require (
 	gvisor.dev/gvisor v0.0.0-20230415003630-3981d5d5e523 // indirect
 	lukechampine.com/blake3 v1.1.7 // indirect
 )
+
