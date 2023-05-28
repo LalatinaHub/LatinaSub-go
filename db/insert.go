@@ -283,17 +283,17 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		}
 
 		for _, value := range queryValues {
-			switch reflect.TypeOf(value).Name() {
-			case "bool":
+			switch reflect.TypeOf(value).Kind() {
+			case reflect.Bool:
 				if value == true {
 					valuesString = valuesString + `1, `
 				} else {
 					valuesString = valuesString + `0, `
 				}
-			case "int", "uint16":
-				valuesString = valuesString + fmt.Sprintf(`%d, `, value)
-			default:
+			case reflect.String:
 				valuesString = valuesString + fmt.Sprintf(`"%s", `, value)
+			default:
+				valuesString = valuesString + fmt.Sprintf(`%d, `, value)
 			}
 		}
 

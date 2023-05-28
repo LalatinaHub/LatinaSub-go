@@ -27,12 +27,13 @@ func toJson(rows *sql.Rows) []DBScheme {
 
 	for rows.Next() {
 		var (
-			server, ip, uuid, password, security, method, plugin, pluginOpts, protocol, protocolParam, obfs, obfsParam, host, transport, path, serviceName, sni, remark, connMode, countryCode, region, org, vpn string
-			serverPort, alterId                                                                                                                                                                                  int
-			tls, insecure                                                                                                                                                                                        bool
+			server, ip, uuid, password, security, method, plugin, pluginOpts, protocol, protocolParam, obfs, obfsParam, host, transport, path, serviceName, sni, remark, connMode, countryCode, region, org, vpn sql.NullString
+			id, serverPort, alterId                                                                                                                                                                              sql.NullInt32
+			tls, insecure                                                                                                                                                                                        sql.NullBool
 		)
 
-		rows.Scan(
+		e := rows.Scan(
+			&id,
 			&server,
 			&ip,
 			&serverPort,
@@ -61,34 +62,38 @@ func toJson(rows *sql.Rows) []DBScheme {
 			&org,
 			&vpn)
 
+		if e != nil {
+			fmt.Println(e)
+		}
+
 		result = append(result, DBScheme{
-			Server:        server,
-			Ip:            ip,
-			ServerPort:    serverPort,
-			UUID:          uuid,
-			Password:      password,
-			Security:      security,
-			AlterId:       alterId,
-			Method:        method,
-			Plugin:        plugin,
-			PluginOpts:    pluginOpts,
-			Protocol:      protocol,
-			ProtocolParam: protocolParam,
-			OBFS:          obfs,
-			OBFSParam:     obfsParam,
-			Host:          host,
-			TLS:           tls,
-			Transport:     transport,
-			Path:          path,
-			ServiceName:   serviceName,
-			Insecure:      insecure,
-			SNI:           sni,
-			Remark:        remark,
-			ConnMode:      connMode,
-			CountryCode:   countryCode,
-			Region:        region,
-			Org:           org,
-			VPN:           vpn,
+			Server:        server.String,
+			Ip:            ip.String,
+			ServerPort:    int(serverPort.Int32),
+			UUID:          uuid.String,
+			Password:      password.String,
+			Security:      security.String,
+			AlterId:       int(alterId.Int32),
+			Method:        method.String,
+			Plugin:        plugin.String,
+			PluginOpts:    pluginOpts.String,
+			Protocol:      protocol.String,
+			ProtocolParam: protocolParam.String,
+			OBFS:          obfs.String,
+			OBFSParam:     obfsParam.String,
+			Host:          host.String,
+			TLS:           tls.Bool,
+			Transport:     transport.String,
+			Path:          path.String,
+			ServiceName:   serviceName.String,
+			Insecure:      insecure.Bool,
+			SNI:           sni.String,
+			Remark:        remark.String,
+			ConnMode:      connMode.String,
+			CountryCode:   countryCode.String,
+			Region:        region.String,
+			Org:           org.String,
+			VPN:           vpn.String,
 		})
 	}
 
