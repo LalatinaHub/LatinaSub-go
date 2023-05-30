@@ -141,11 +141,12 @@ func (l *Vless) Parse(u *url.URL) error {
 				l.AllownInsecure = true
 			}
 		case "security":
-			l.TLS = true
+			l.TLS = false
 			switch values[0] {
-			case "":
-				l.TLS = false
+			case "tls":
+				l.TLS = true
 			case "reality":
+				l.TLS = true
 				l.Reality = true
 			}
 		case "type":
