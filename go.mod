@@ -8,7 +8,7 @@ require (
 	github.com/sagernet/sing-box v1.2.7-0.20230520041538-9ee0f0e74e50
 )
 
-replace github.com/sagernet/sing-box => github.com/LalatinaHub/sing-box v0.0.0-20230610021002-4becc054a346
+replace github.com/sagernet/sing-box => github.com/LalatinaHub/sing-box v0.0.0-20230610102329-e349d097c3ec
 
 require (
 	berty.tech/go-libtor v1.0.385 // indirect
