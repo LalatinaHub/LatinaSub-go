@@ -1,7 +1,6 @@
 package scraper
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,6 +12,7 @@ import (
 	"time"
 
 	"github.com/LalatinaHub/LatinaSub-go/helper"
+	"github.com/LalatinaHub/LatinaSub-go/link"
 	"github.com/LalatinaHub/LatinaSub-go/subscription"
 )
 
@@ -33,54 +33,47 @@ var (
 
 func worker(subUrl string) []string {
 	var (
-		nodes []string
+		nodes                  = []string{}
 		buf   *strings.Builder = new(strings.Builder)
 	)
 
 	resp, err := client.Get(subUrl)
-	if err != nil {
-		return []string{}
-	} else if resp.StatusCode != 200 {
-		return []string{}
+	if err != nil || resp.StatusCode != 200 {
+		return nodes
 	}
 
 	// We assume fetch success
 	io.Copy(buf, resp.Body)
 
-	// Detech content-type of the successfull fetch
-	contentType := resp.Header.Get("Content-Type")
-	if strings.HasPrefix(contentType, "application") && !strings.HasPrefix(subUrl, subconverterUrl) {
-		// Probably type: yaml, x-yaml, octet-stream
+	str := link.DoBase64DecodeOrNothing(buf.String())
+	foundNodes := protocolPattern.FindAllString(str, -1)
 
-		// Re-fetch suburl using subconverter api
+	if len(foundNodes) > 0 {
+		nodes = append(nodes, foundNodes...)
+	} else if !strings.HasSuffix(subUrl, "fool=1") {
+		url := subUrl
+		if strings.HasPrefix(subUrl, subconverterUrl) {
+			for _, i := range strings.Split(subUrl, "?") {
+				for _, x := range strings.Split(i, "&") {
+					if strings.HasPrefix(x, "url=") {
+						url = strings.Split(x, "=")[1]
+					}
+				}
+			}
+		}
+
 		for _, protocolType := range acceptedProtocol {
 			switch protocolType {
 			case "vmess":
-				subUrl = fmt.Sprintf("%ssub?target=v2ray&url=%s", subconverterUrl, subUrl)
+				subUrl = fmt.Sprintf("%ssub?target=v2ray&url=%s&fool=1", subconverterUrl, url)
 			case "vless":
 				continue
 			default:
-				subUrl = fmt.Sprintf("%ssub?target=%s&url=%s", subconverterUrl, protocolType, subUrl)
+				subUrl = fmt.Sprintf("%ssub?target=%s&url=%s&fool=1", subconverterUrl, protocolType, url)
 			}
 			nodes = append(nodes, worker(subUrl)...)
 		}
-	} else {
-		str := buf.String()
-
-		// Find all nodes by pattern
-		foundNodes := protocolPattern.FindAllString(str, -1)
-
-		// The result maybe base64 encoded, so we try to decode it
-		if len(foundNodes) == 0 {
-			if decodedStr, _ := base64.StdEncoding.DecodeString(str); decodedStr != nil {
-				foundNodes = protocolPattern.FindAllString(string(decodedStr), -1)
-			}
-		}
-
-		// Populate slices
-		nodes = append(nodes, foundNodes...)
 	}
-
 	return nodes
 }
 
@@ -108,7 +101,7 @@ func Run() []string {
 				defer func() {
 					wg.Done()
 
-					// Release id to make a empty space
+					// Release id to make an empty space
 					<-channels
 				}()
 

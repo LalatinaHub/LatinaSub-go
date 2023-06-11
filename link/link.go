@@ -37,7 +37,7 @@ func Parse(u *url.URL) (Link, error) {
 	return nil, E.Errors(errs...)
 }
 
-func doBase64DecodeOrNothing(s string) string {
+func DoBase64DecodeOrNothing(s string) string {
 	b, err := base64Decode(s)
 	if err != nil {
 		return s

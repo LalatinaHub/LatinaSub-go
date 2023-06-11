@@ -85,7 +85,7 @@ func (l *ShadowSocksR) Parse(u *url.URL) error {
 		case 4:
 			l.Obfs = value
 		case 5:
-			l.Password = doBase64DecodeOrNothing(strings.TrimSuffix(value, "/")) // Password
+			l.Password = DoBase64DecodeOrNothing(strings.TrimSuffix(value, "/")) // Password
 		}
 	}
 	u, err = url.Parse(newLink + "/?" + s[1])
@@ -105,15 +105,15 @@ func (l *ShadowSocksR) Parse(u *url.URL) error {
 	for key, values := range queries {
 		switch key {
 		case "protoparam":
-			l.ProtocolParam = doBase64DecodeOrNothing(values[0])
+			l.ProtocolParam = DoBase64DecodeOrNothing(values[0])
 		case "obfsparam":
-			l.ObfsParam = doBase64DecodeOrNothing(values[0])
+			l.ObfsParam = DoBase64DecodeOrNothing(values[0])
 			if !strings.HasPrefix(l.ObfsParam, "obfs") {
 				l.ObfsParam = ""
 			}
 		case "remarks":
 			values[0] = strings.ReplaceAll(values[0], " ", "+")
-			l.Ps = doBase64DecodeOrNothing(values[0])
+			l.Ps = DoBase64DecodeOrNothing(values[0])
 		}
 	}
 
