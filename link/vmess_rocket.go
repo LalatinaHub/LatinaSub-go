@@ -63,6 +63,7 @@ func (l *VMessRocket) Parse(u *url.URL) error {
 	l.Server = idadd[1]
 	l.AlterID = 0
 	l.Security = "auto"
+	l.TLSAllowInsecure = true
 
 	for key, values := range u.Query() {
 		switch key {

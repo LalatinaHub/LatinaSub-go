@@ -30,7 +30,7 @@ type Vless struct {
 	Address         string
 	Port            uint16
 	Remarks         string
-	AllownInsecure  bool
+	AllowInsecure   bool
 	TLS             bool
 	Reality         bool
 	TransportPath   string
@@ -60,7 +60,7 @@ func (l *Vless) Options() *option.Outbound {
 		out.VLESSOptions.TLS = &option.OutboundTLSOptions{
 			Enabled:    l.TLS,
 			ServerName: l.SNI,
-			Insecure:   l.AllownInsecure,
+			Insecure:   l.AllowInsecure,
 			DisableSNI: false,
 		}
 
@@ -125,6 +125,7 @@ func (l *Vless) Parse(u *url.URL) error {
 	}
 	l.Address = u.Hostname()
 	l.Port = uint16(port)
+	l.AllowInsecure = true
 	l.Remarks = u.Fragment
 	if uname := u.User.Username(); uname != "" {
 		l.UUID = uname
@@ -136,9 +137,7 @@ func (l *Vless) Parse(u *url.URL) error {
 		case "allowinsecure":
 			switch values[0] {
 			case "0":
-				l.AllownInsecure = false
-			default:
-				l.AllownInsecure = true
+				l.AllowInsecure = false
 			}
 		case "security":
 			l.TLS = false

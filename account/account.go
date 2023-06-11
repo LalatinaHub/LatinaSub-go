@@ -14,7 +14,7 @@ import (
 
 var (
 	cdnHost string = "172.67.73.39"
-	sniHost string = "teams.microsoft.com"
+	sniHost string = "meet.google.com"
 )
 
 type Account struct {

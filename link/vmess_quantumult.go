@@ -53,6 +53,7 @@ func (l *VMessQuantumult) Parse(u *url.URL) error {
 	}
 	l.Server = params[1]
 	l.ServerPort = uint16(port)
+	l.TLSAllowInsecure = true
 	l.Security = params[3]
 	l.UUID = strings.Trim(params[4], "\"")
 	l.AlterID = 0
@@ -88,7 +89,6 @@ func (l *VMessQuantumult) Parse(u *url.URL) error {
 			case "certificate":
 				switch kvp[1] {
 				case "0":
-					l.TLSAllowInsecure = true
 				default:
 					l.TLSAllowInsecure = false
 				}

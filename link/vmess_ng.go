@@ -68,6 +68,7 @@ func (l *Vmess) Parse(u *url.URL) error {
 	l.Tag = v.Ps
 	l.Server = v.Add
 	l.ServerPort = uint16(v.Port)
+	l.TLSAllowInsecure = true
 	l.UUID = v.ID
 	l.AlterID = int(v.Aid)
 	l.Security = "auto"
@@ -85,9 +86,7 @@ func (l *Vmess) Parse(u *url.URL) error {
 		l.TLS = false
 	}
 
-	if v.SkipCertVerify != nil {
-		l.TLSAllowInsecure = true
-	} else {
+	if v.SkipCertVerify == "" {
 		l.TLSAllowInsecure = false
 	}
 	l.SNI = v.SNI
