@@ -5,7 +5,6 @@ import (
 	"os"
 	"reflect"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/LalatinaHub/LatinaSub-go/account"
@@ -110,14 +109,7 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		TLS = account.Outbound.VLESSOptions.TLS
 		Transport = account.Outbound.VLESSOptions.Transport
 	case C.TypeShadowsocks:
-		port := int64(account.Outbound.ShadowsocksOptions.ServerPort)
 		anyOutbound = account.Outbound.ShadowsocksOptions
-
-		if m, _ := regexp.MatchString("80|88", strconv.FormatInt(port, 10)); !m {
-			TLS = &option.OutboundTLSOptions{
-				Enabled: true,
-			}
-		}
 	case C.TypeShadowsocksR:
 		anyOutbound = account.Outbound.ShadowsocksROptions
 

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
-	"strconv"
 
 	"github.com/LalatinaHub/LatinaSub-go/helper"
 	"github.com/LalatinaHub/LatinaSub-go/link"
@@ -88,17 +87,6 @@ func (account Account) PopulateSNI() *option.Outbound {
 	case C.TypeTrojan:
 		TLS = account.Outbound.TrojanOptions.TLS
 	case C.TypeShadowsocks:
-		var (
-			obfs = "tls"
-			port = int64(account.Outbound.ShadowsocksOptions.ServerPort)
-		)
-
-		if m, _ := regexp.MatchString("80|88", strconv.FormatInt(port, 10)); m {
-			obfs = "http"
-		}
-
-		account.Outbound.ShadowsocksOptions.Plugin = "obfs-local"
-		account.Outbound.ShadowsocksOptions.PluginOptions = fmt.Sprintf("obfs=%s;obfs-host=%s", obfs, sniHost)
 		return &account.Outbound
 	case C.TypeShadowsocksR:
 		var obfs = "http"
