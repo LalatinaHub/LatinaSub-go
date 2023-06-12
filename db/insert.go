@@ -218,7 +218,7 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 			"", // Security
 			0,  // Alter ID
 			outbound.Method,
-			"obfs-local",
+			outbound.Plugin,
 			outbound.PluginOptions,
 			"", // Protocol,
 			"", // Protocol Opts
