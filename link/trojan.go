@@ -126,7 +126,7 @@ func (l *Trojan) Parse(u *url.URL) error {
 			}
 		case "security":
 			switch values[0] {
-			case "":
+			case "", "0", "none":
 				l.TLS = false
 			default:
 				l.TLS = true
