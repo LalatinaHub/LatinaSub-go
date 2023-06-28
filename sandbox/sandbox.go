@@ -59,7 +59,7 @@ func worker(link, connectMode string) (string, ipapi.Ipapi) {
 
 	proxyClient, _ := url.Parse(fmt.Sprintf("socks5://0.0.0.0:%d", listenPort))
 	httpClient := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: 5 * time.Second,
 		Transport: &http.Transport{
 			Proxy: http.ProxyURL(proxyClient),
 			TLSClientConfig: &tls.Config{
