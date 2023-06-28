@@ -29,7 +29,7 @@ func initAll() {
 	subscription.Init()
 }
 
-func Start(nodes []string) int {
+func Start(nodes []string, saveToDB bool) (int, []*sandbox.SandBox) {
 	start := time.Now()
 
 	if concurrentStr, isSet := os.LookupEnv("CONCURRENT"); isSet {
@@ -102,9 +102,11 @@ func Start(nodes []string) int {
 	blacklist.Clear()
 
 	// Write all result to database
-	fmt.Println("Saving result to database, please wait !")
-	db.CreateTable()
-	db.Save(GoodBoxes)
+	if saveToDB {
+		fmt.Println("Saving result to database, please wait !")
+		db.CreateTable()
+		db.Save(GoodBoxes)
+	}
 
 	// Log collapsed time
 	fmt.Println("Total CPU:", runtime.NumCPU())
@@ -112,5 +114,5 @@ func Start(nodes []string) int {
 	fmt.Println("Total accounts:", db.TotalAccount)
 	fmt.Println("Finish Time:", time.Now().In(loc).Format("2006-01-02 15:04:05"))
 
-	return db.TotalAccount
+	return db.TotalAccount, GoodBoxes
 }

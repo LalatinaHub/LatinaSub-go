@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// Start the main func
-	latinasub.Start([]string{})
+	latinasub.Start([]string{}, false)
 
 	fmt.Printf("\n==============================\n")
 	fmt.Println("Software will exit in 10 second !")
