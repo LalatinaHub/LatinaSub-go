@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"os"
 	"reflect"
@@ -12,6 +13,29 @@ import (
 	"github.com/LalatinaHub/LatinaSub-go/sandbox"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
+)
+
+var (
+	ExcludedServer = func() []string {
+		domains := []string{}
+		rows, err := New().conn.Query("SELECT domain FROM domains;")
+		if err != nil {
+			fmt.Println(err)
+			return domains
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var (
+				server sql.NullString
+			)
+
+			rows.Scan(&server)
+			domains = append(domains, server.String)
+		}
+
+		return domains
+	}()
 )
 
 func (db *DB) Save(boxes []*sandbox.SandBox) {
@@ -269,7 +293,14 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 			account.Outbound.Type,
 		}...)
 
-		// Check is account exists on database
+		// Check if account server is excluded
+		for _, server := range ExcludedServer {
+			if server == queryValues[0] || server == queryValues[14] {
+				return queries
+			}
+		}
+
+		// Check if account exists on database
 		if db.isExists(queryValues) {
 			continue
 		}

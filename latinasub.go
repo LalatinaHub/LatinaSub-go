@@ -108,7 +108,8 @@ func Start(nodes []string, saveToDB bool) (int, []*sandbox.SandBox) {
 		db.Save(GoodBoxes)
 	}
 
-	// Log collapsed time
+	// Log Info
+	fmt.Println("Excluded servers:", D.ExcludedServer)
 	fmt.Println("Total CPU:", runtime.NumCPU())
 	fmt.Println("Total time collapsed:", time.Since(start))
 	fmt.Println("Total accounts:", db.TotalAccount)
