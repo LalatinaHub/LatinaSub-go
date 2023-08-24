@@ -43,17 +43,12 @@ func (db *DB) isExists(values []any) bool {
 	// Server Port, UUID, Password, Transport, Conn Mode, VPN
 	uid := fmt.Sprintf("%d_%s_%s_%s_%s_%s", values[2], values[3], values[4], values[16], values[22], values[26])
 
-	if values[1] != "" {
-		// Ip
-		uid = uid + fmt.Sprintf("_%s", values[1])
+	if values[22] == "cdn" {
+		// Host
+		uid = uid + fmt.Sprintf("_%s", values[14])
 	} else {
-		if values[22] == "cdn" {
-			// Host
-			uid = uid + fmt.Sprintf("_%s", values[14])
-		} else {
-			// Server
-			uid = uid + fmt.Sprintf("_%s", values[0])
-		}
+		// Server
+		uid = uid + fmt.Sprintf("_%s", values[0])
 	}
 
 	for _, existsId := range db.uniqueIds {
