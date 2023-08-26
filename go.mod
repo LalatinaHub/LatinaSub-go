@@ -3,9 +3,9 @@ module github.com/LalatinaHub/LatinaSub-go
 go 1.19
 
 require (
-	github.com/lib/pq v1.10.7
-	github.com/sagernet/sing v0.2.5-0.20230530114415-221f066dba7c
-	github.com/sagernet/sing-box v1.2.7-0.20230520041538-9ee0f0e74e50
+	github.com/lib/pq v1.10.9
+	github.com/sagernet/sing v0.2.10-0.20230807080248-4db0062caa0a
+	github.com/sagernet/sing-box v1.4.0-rc.3
 )
 
 replace github.com/sagernet/sing-box => github.com/LalatinaHub/sing-box v0.0.0-20230610102329-e349d097c3ec
@@ -78,7 +78,7 @@ require (
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/mod v0.10.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.8.0 // indirect
