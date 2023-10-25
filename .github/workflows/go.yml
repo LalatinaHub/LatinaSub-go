@@ -9,16 +9,18 @@ env:
   DB_URL: ${{ secrets.DB_URL }}
 
 jobs:
-
   run:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        check-latest: true
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          check-latest: true
 
-    - name: Run LatinaSub-Go
-      run: go run ./cmd/latinasub/main.go
+      - name: Build LatinaSub-Go
+        run: go build -o ./latinasub ./cmd/latinasub/main.go
+
+      - name: Run LatinaSub-Go
+        run: ./latinasub save_to_db
