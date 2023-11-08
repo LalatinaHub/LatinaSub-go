@@ -69,7 +69,7 @@ func worker(link, connectMode string) (string, ipapi.Ipapi) {
 	}
 
 	buf := new(strings.Builder)
-	resp, err := httpClient.Get("http://ipinfo.io/json")
+	resp, err := httpClient.Get("http://ipapi.co/json")
 	if err != nil {
 		panic(err)
 	}
