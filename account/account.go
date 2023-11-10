@@ -1,10 +1,6 @@
 package account
 
 import (
-	"fmt"
-
-	"github.com/LalatinaHub/LatinaSub-go/helper"
-	"github.com/LalatinaHub/LatinaSub-go/provider"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
 )
@@ -15,31 +11,13 @@ var (
 )
 
 type Account struct {
-	Link     string
 	Outbound option.Outbound
 }
 
-func New(link string) *Account {
-	account := Account{Link: link}
-	account.Outbound = account.buildOutbound()
+func New(node option.Outbound) *Account {
+	account := Account{Outbound: node}
 
 	return &account
-}
-
-func (account *Account) buildOutbound() option.Outbound {
-	defer helper.CatchError(true)
-
-	var outbound option.Outbound
-
-	if outbounds, err := provider.Parse(account.Link); err != nil {
-		fmt.Println("[Error]", err.Error())
-	} else {
-		if len(outbounds) > 0 {
-			outbound = outbounds[0]
-		}
-	}
-
-	return outbound
 }
 
 func (account Account) PopulateCDN() *option.Outbound {

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	latinasub "github.com/LalatinaHub/LatinaSub-go"
+	"github.com/sagernet/sing-box/option"
 )
 
 var (
@@ -21,7 +22,7 @@ func main() {
 		}
 	}
 
-	latinasub.Start([]string{}, saveToDB)
+	latinasub.Start([]option.Outbound{}, saveToDB)
 
 	fmt.Printf("\n==============================\n")
 	fmt.Println("Software will exit in 10 second !")
