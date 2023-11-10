@@ -43,7 +43,6 @@ func worker(subUrl string) []option.Outbound {
 	io.Copy(buf, resp.Body)
 
 	content := provider.DecodeBase64Safe(buf.String())
-	fmt.Println(content)
 	nodes, err = provider.Parse(content)
 	if err != nil {
 		fmt.Println("[Error]", err.Error())
@@ -96,9 +95,6 @@ func Run() []option.Outbound {
 		}
 	}
 	wg.Wait()
-
-	// Filter nodes
-	fmt.Println("[filter] Filtering nodes !")
 
 	return nodes
 }
