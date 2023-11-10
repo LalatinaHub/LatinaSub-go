@@ -6,14 +6,13 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"regexp"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/LalatinaHub/LatinaSub-go/helper"
-	"github.com/LalatinaHub/LatinaSub-go/link"
+	"github.com/LalatinaHub/LatinaSub-go/provider"
 	"github.com/LalatinaHub/LatinaSub-go/subscription"
+	"github.com/sagernet/sing-box/option"
 )
 
 var (
@@ -22,18 +21,16 @@ var (
 	maxNodes        int      = -1
 	wg              sync.WaitGroup
 
-	acceptedProtocol []string       = []string{"vmess", "ss", "trojan", "vless", "ssr"}
-	protocolPattern  *regexp.Regexp = regexp.MustCompile(fmt.Sprintf("(%s)://.+", strings.Join(acceptedProtocol, "|")))
-	subFile          []subscription.SubStruct
+	subFile []subscription.SubStruct
 
 	client http.Client = http.Client{
 		Timeout: 30 * time.Second,
 	}
 )
 
-func worker(subUrl string) []string {
+func worker(subUrl string) []option.Outbound {
 	var (
-		nodes                  = []string{}
+		nodes                  = []option.Outbound{}
 		buf   *strings.Builder = new(strings.Builder)
 	)
 
@@ -45,40 +42,27 @@ func worker(subUrl string) []string {
 	// We assume fetch success
 	io.Copy(buf, resp.Body)
 
-	str := link.DoBase64DecodeOrNothing(buf.String())
-	foundNodes := protocolPattern.FindAllString(str, -1)
+	content := provider.DecodeBase64Safe(buf.String())
+	nodes, err = provider.Parse(content)
+	if err != nil {
+		fmt.Println("[Error]", err.Error())
+	}
 
-	if len(foundNodes) > 0 {
-		nodes = append(nodes, foundNodes...)
-	} else if !strings.HasSuffix(subUrl, "fool=1") {
-		url := subUrl
-		if strings.HasPrefix(subUrl, subconverterUrl) {
-			for _, i := range strings.Split(subUrl, "?") {
-				for _, x := range strings.Split(i, "&") {
-					if strings.HasPrefix(x, "url=") {
-						url = strings.Split(x, "=")[1]
-					}
+	if len(nodes) == 0 && strings.HasPrefix(subUrl, subconverterUrl) {
+		for _, i := range strings.Split(subUrl, "?") {
+			for _, x := range strings.Split(i, "&") {
+				if strings.HasPrefix(x, "url=") {
+					nodes = append(nodes, worker(strings.Split(x, "=")[1])...)
 				}
 			}
 		}
-
-		for _, protocolType := range acceptedProtocol {
-			switch protocolType {
-			case "vmess":
-				subUrl = fmt.Sprintf("%ssub?target=v2ray&url=%s&fool=1", subconverterUrl, url)
-			case "vless":
-				continue
-			default:
-				subUrl = fmt.Sprintf("%ssub?target=%s&url=%s&fool=1", subconverterUrl, protocolType, url)
-			}
-			nodes = append(nodes, worker(subUrl)...)
-		}
 	}
+
 	return nodes
 }
 
-func Run() []string {
-	var nodes []string
+func Run() []option.Outbound {
+	var nodes []option.Outbound
 	file, _ := os.ReadFile(subscription.SubFile)
 	json.Unmarshal(file, &subFile)
 
@@ -111,17 +95,6 @@ func Run() []string {
 		}
 	}
 	wg.Wait()
-
-	// Filter nodes
-	fmt.Println("[filter] Filtering nodes !")
-	nodes = filter(nodes)
-
-	return nodes
-}
-
-func filter(nodes []string) []string {
-	nodes = helper.FilterDuplicateString(nodes)
-	nodes = helper.FilterEmptyString(nodes)
 
 	return nodes
 }

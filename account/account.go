@@ -1,12 +1,6 @@
 package account
 
 import (
-	"fmt"
-	"net/url"
-	"regexp"
-
-	"github.com/LalatinaHub/LatinaSub-go/helper"
-	"github.com/LalatinaHub/LatinaSub-go/link"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
 )
@@ -17,46 +11,13 @@ var (
 )
 
 type Account struct {
-	Link     string
 	Outbound option.Outbound
 }
 
-func New(link string) *Account {
-	account := Account{Link: link}
-	account.Outbound = account.buildOutbound()
+func New(node option.Outbound) *Account {
+	account := Account{Outbound: node}
 
 	return &account
-}
-
-func (account *Account) buildOutbound() option.Outbound {
-	defer helper.CatchError(true)
-
-	var outbound option.Outbound
-	if parsedNode, _ := url.Parse(account.Link); parsedNode != nil {
-		if val, err := link.Parse(parsedNode); val != nil {
-			outbound = option.Outbound{
-				Type: val.Options().Type,
-				Tag:  val.Options().Tag,
-			}
-
-			switch val.Options().Type {
-			case C.TypeVMess:
-				outbound.VMessOptions = val.Options().VMessOptions
-			case C.TypeVLESS:
-				outbound.VLESSOptions = val.Options().VLESSOptions
-			case C.TypeTrojan:
-				outbound.TrojanOptions = val.Options().TrojanOptions
-			case C.TypeShadowsocks:
-				outbound.ShadowsocksOptions = val.Options().ShadowsocksOptions
-			case C.TypeShadowsocksR:
-				outbound.ShadowsocksROptions = val.Options().ShadowsocksROptions
-			}
-		} else if err != nil {
-			fmt.Println("[Error]", err.Error())
-		}
-	}
-
-	return outbound
 }
 
 func (account Account) PopulateCDN() *option.Outbound {
@@ -69,8 +30,6 @@ func (account Account) PopulateCDN() *option.Outbound {
 		account.Outbound.TrojanOptions.Server = cdnHost
 	case C.TypeShadowsocks:
 		account.Outbound.ShadowsocksOptions.Server = cdnHost
-	case C.TypeShadowsocksR:
-		account.Outbound.ShadowsocksROptions.Server = cdnHost
 	}
 
 	return &account.Outbound
@@ -86,16 +45,6 @@ func (account Account) PopulateSNI() *option.Outbound {
 		TLS = account.Outbound.VLESSOptions.TLS
 	case C.TypeTrojan:
 		TLS = account.Outbound.TrojanOptions.TLS
-	case C.TypeShadowsocks:
-		return &account.Outbound
-	case C.TypeShadowsocksR:
-		var obfs = "http"
-
-		if m, _ := regexp.MatchString("tls", account.Outbound.ShadowsocksROptions.Obfs); m {
-			obfs = "tls"
-		}
-
-		account.Outbound.ShadowsocksROptions.ObfsParam = fmt.Sprintf("obfs=%s;obfs-host=%s", obfs, sniHost)
 	default:
 		return &account.Outbound
 	}

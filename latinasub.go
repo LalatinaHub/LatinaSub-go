@@ -14,6 +14,7 @@ import (
 	"github.com/LalatinaHub/LatinaSub-go/helper"
 	"github.com/LalatinaHub/LatinaSub-go/sandbox"
 	"github.com/LalatinaHub/LatinaSub-go/scraper"
+	"github.com/sagernet/sing-box/option"
 
 	"github.com/LalatinaHub/LatinaSub-go/subscription"
 )
@@ -29,7 +30,7 @@ func initAll() {
 	subscription.Init()
 }
 
-func Start(nodes []string, saveToDB bool) (int, []*sandbox.SandBox) {
+func Start(nodes []option.Outbound, saveToDB bool) (int, []*sandbox.SandBox) {
 	start := time.Now()
 
 	if concurrentStr, isSet := os.LookupEnv("CONCURRENT"); isSet {
@@ -46,7 +47,7 @@ func Start(nodes []string, saveToDB bool) (int, []*sandbox.SandBox) {
 	db := D.New()
 
 	// Scrape nodes from sub list if parameter is empty
-	if len(nodes) <= 0 {
+	if len(nodes) == 0 {
 		// Merge sub list
 		subscription.Merge()
 
@@ -59,7 +60,7 @@ func Start(nodes []string, saveToDB bool) (int, []*sandbox.SandBox) {
 
 		// Build uid
 		sb := sandbox.SandBox{}
-		sb.Link = node
+		sb.Outbound = node
 		uid := strings.Join(db.BuildValuesQuery(&sb), "_")
 
 		// Blacklist guard
@@ -71,7 +72,7 @@ func Start(nodes []string, saveToDB bool) (int, []*sandbox.SandBox) {
 		wg.Add(1)
 
 		ch <- 1
-		go func(node string, numNodes, id int) {
+		go func(node option.Outbound, numNodes, id int) {
 			// Catch on error and done wg
 			defer helper.CatchError(false)
 

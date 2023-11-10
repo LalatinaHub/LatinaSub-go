@@ -14,6 +14,7 @@ import (
 	"github.com/LalatinaHub/LatinaSub-go/helper"
 	"github.com/LalatinaHub/LatinaSub-go/ipapi"
 	B "github.com/sagernet/sing-box"
+	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
 )
 
@@ -22,14 +23,14 @@ var (
 )
 
 type SandBox struct {
-	Link        string
+	Outbound    option.Outbound
 	ConnectMode []string
 	IpapiObj    ipapi.Ipapi
 }
 
-func worker(link, connectMode string) (string, ipapi.Ipapi) {
+func worker(node option.Outbound, connectMode string) (string, ipapi.Ipapi) {
 	var (
-		acc        = account.New(link)
+		acc        = account.New(node)
 		options    option.Options
 		listenPort uint
 	)
@@ -83,24 +84,24 @@ func worker(link, connectMode string) (string, ipapi.Ipapi) {
 	return "", ipapi.Ipapi{}
 }
 
-func Test(link string) *SandBox {
+func Test(node option.Outbound) *SandBox {
 	var sb SandBox = SandBox{}
 
 	// Constructor
-	sb.Link = link
+	sb.Outbound = node
 
 	for _, t := range populateType {
-		switch strings.Split(link, "://")[0] {
-		case "ssr", "ss":
+		switch sb.Outbound.Type {
+		case C.TypeShadowsocksR, C.TypeShadowsocks:
 			if t == "cdn" {
 				continue
 			}
 		}
 
-		mode, ipapi := func(link, t string) (string, ipapi.Ipapi) {
+		mode, ipapi := func(node option.Outbound, t string) (string, ipapi.Ipapi) {
 			defer helper.CatchError(false)
-			return worker(link, t)
-		}(link, t)
+			return worker(node, t)
+		}(sb.Outbound, t)
 
 		if mode != "" {
 			sb.ConnectMode = append(sb.ConnectMode, mode)

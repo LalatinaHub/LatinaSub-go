@@ -113,7 +113,7 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		Transport   *option.V2RayTransportOptions
 		TLSSTR      string           = "NTLS"
 		host        string           = ""
-		account     *account.Account = account.New(box.Link)
+		account     *account.Account = account.New(box.Outbound)
 		anyOutbound interface{}
 		values      []any
 		queries     []string
@@ -279,7 +279,7 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		Transport.WebsocketOptions.Path,
 		Transport.GRPCOptions.ServiceName,
 		TLS.Insecure,
-		TLS.ServerName,
+		host,
 	}...)
 
 	for _, mode := range box.ConnectMode {
