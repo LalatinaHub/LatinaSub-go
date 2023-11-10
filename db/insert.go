@@ -279,7 +279,7 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		Transport.WebsocketOptions.Path,
 		Transport.GRPCOptions.ServiceName,
 		TLS.Insecure,
-		TLS.ServerName,
+		host,
 	}...)
 
 	for _, mode := range box.ConnectMode {
