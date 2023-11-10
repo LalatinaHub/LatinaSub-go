@@ -6,6 +6,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/sagernet/sing v0.2.18-0.20231108041402-4fbbd193203c
 	github.com/sagernet/sing-box v1.7.0-alpha.11
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

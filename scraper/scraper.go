@@ -22,7 +22,7 @@ var (
 	maxNodes        int      = -1
 	wg              sync.WaitGroup
 
-	acceptedProtocol []string       = []string{"vmess", "ss", "trojan", "vless", "ssr"}
+	acceptedProtocol []string       = []string{"vmess", "ss", "trojan", "vless"}
 	protocolPattern  *regexp.Regexp = regexp.MustCompile(fmt.Sprintf("(%s)://.+", strings.Join(acceptedProtocol, "|")))
 	subFile          []subscription.SubStruct
 
