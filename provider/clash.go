@@ -913,6 +913,7 @@ func newHysteria2ClashParser(proxy map[string]any) (option.Outbound, error) {
 		Type: C.TypeHysteria2,
 	}
 	options := option.Hysteria2OutboundOptions{}
+	obfsOption := option.Hysteria2Obfs{}
 	if name, exists := proxy["name"].(string); exists {
 		outbound.Tag = name
 	}
@@ -932,11 +933,15 @@ func newHysteria2ClashParser(proxy map[string]any) (option.Outbound, error) {
 		options.DownMbps = down
 	}
 	if obfs, exists := proxy["obfs"].(string); exists && obfs == "salamander" {
-		options.Obfs.Type = "salamander"
+		obfsOption.Type = obfs
 	}
 	if obfsPassword, exists := proxy["obfs-password"].(string); exists {
-		options.Obfs.Password = obfsPassword
+		obfsOption.Password = obfsPassword
 	}
+	if obfsOption.Type != "" {
+		options.Obfs = &obfsOption
+	}
+
 	options.TLS = convertTLSOptions(proxy)
 	options.TLS.Enabled = true
 	options.TLS.UTLS.Enabled = false
@@ -957,6 +962,7 @@ func newHysteria2ClashParser(proxy map[string]any) (option.Outbound, error) {
 		}
 		options.TLS.Certificate = caStrArr
 	}
+
 	options.DialerOptions = convertDialerOption(proxy)
 	outbound.Hysteria2Options = options
 	return outbound, nil
