@@ -104,7 +104,11 @@ func newSSNativeParser(content string) (option.Outbound, error) {
 	options.Server = result[2]
 	options.ServerPort = stringToUint16(result[3])
 	cryptoArr := strings.Split(DecodeBase64Safe(result[1]), ":")
-	options.Method, options.Password = cryptoArr[0], cryptoArr[1]
+	if len(cryptoArr) == 2 {
+		options.Method, options.Password = cryptoArr[0], cryptoArr[1]
+	} else {
+		options.Method, options.Password = "none", cryptoArr[0]
+	}
 	plugin := ""
 	pluginArr := []string{}
 	for _, addon := range strings.Split(decodeURIComponent(result[4]), "&") {
@@ -112,8 +116,6 @@ func newSSNativeParser(content string) (option.Outbound, error) {
 		switch key {
 		case "plugin":
 			if strings.Contains(value, "obfs") {
-				plugin = "obfs-local"
-			} else if strings.Contains(value, "obfs") {
 				plugin = "obfs-local"
 			}
 		default:
