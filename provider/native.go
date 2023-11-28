@@ -593,7 +593,9 @@ func newTrojanNativeParser(content string) (option.Outbound, error) {
 					Transport.GRPCOptions.ServiceName = serviceName
 				}
 			}
-			options.Transport = &Transport
+			if Transport.Type != "" {
+				options.Transport = &Transport
+			}
 		case "tfo", "tcp-fast-open", "tcp_fast_open":
 			if value == "1" || value == "true" {
 				options.TCPFastOpen = true
