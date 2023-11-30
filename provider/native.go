@@ -475,7 +475,9 @@ func newVLESSNativeParser(content string) (option.Outbound, error) {
 					Transport.GRPCOptions.ServiceName = serviceName
 				}
 			}
-			options.Transport = &Transport
+			if Transport.Type != "" {
+				options.Transport = &Transport
+			}
 		case "security":
 			if value == "tls" {
 				TLSOptions.Enabled = true
