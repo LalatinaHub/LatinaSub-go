@@ -19,7 +19,8 @@ import (
 )
 
 var (
-	populateType []string = []string{"cdn", "sni"}
+	populateType     = []string{"cdn", "sni"}
+	connectivityHost = []string{"http://ipapi.co/json", "http://ipinfo.io/json", "http://google.com"}
 )
 
 type SandBox struct {
@@ -60,7 +61,7 @@ func worker(node option.Outbound, connectMode string) (string, ipapi.Ipapi) {
 
 	proxyClient, _ := url.Parse(fmt.Sprintf("socks5://0.0.0.0:%d", listenPort))
 	httpClient := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
 			Proxy: http.ProxyURL(proxyClient),
 			TLSClientConfig: &tls.Config{
@@ -69,16 +70,21 @@ func worker(node option.Outbound, connectMode string) (string, ipapi.Ipapi) {
 		},
 	}
 
-	buf := new(strings.Builder)
-	resp, err := httpClient.Get("http://ipapi.co/json")
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
+	for _, host := range connectivityHost {
+		buf := new(strings.Builder)
+		resp, err := httpClient.Get(host)
+		if err != nil {
+			panic(err)
+		}
+		defer resp.Body.Close()
 
-	io.Copy(buf, resp.Body)
-	if resp.StatusCode == 200 {
-		return connectMode, ipapi.Parse(buf.String())
+		io.Copy(buf, resp.Body)
+		if resp.StatusCode == 200 {
+			if strings.HasSuffix(host, "com") {
+				return connectMode, ipapi.Parse("{}")
+			}
+			return connectMode, ipapi.Parse(buf.String())
+		}
 	}
 
 	return "", ipapi.Ipapi{}
