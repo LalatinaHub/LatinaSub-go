@@ -43,9 +43,20 @@ func worker(subUrl string) []option.Outbound {
 	io.Copy(buf, resp.Body)
 
 	content := provider.DecodeBase64Safe(buf.String())
-	nodes, err = provider.Parse(content)
-	if err != nil {
-		fmt.Println("[Error]", err.Error())
+	for _, node := range strings.Split(content, "\n") {
+		outbounds, err := provider.Parse(node)
+		if err != nil {
+			fmt.Println("[Error]", err.Error())
+		}
+
+		for _, outbound := range outbounds {
+			if _, err = json.Marshal(outbound); err != nil {
+				fmt.Println("Error Provider:", err)
+				fmt.Println("Error Parsing:", node)
+			} else {
+				nodes = append(nodes, outbound)
+			}
+		}
 	}
 
 	if len(nodes) == 0 && strings.HasPrefix(subUrl, subconverterUrl) {
