@@ -347,9 +347,7 @@ func newVMessNativeParser(content string) (option.Outbound, error) {
 			case "tcp":
 				if tType, exists := proxy["type"]; exists {
 					if tType == "http" {
-						options.Transport = &option.V2RayTransportOptions{
-							Type: C.V2RayTransportTypeHTTP,
-						}
+						Transport.Type = C.V2RayTransportTypeHTTP
 						if method, exists := proxy["method"]; exists {
 							Transport.HTTPOptions.Method = method
 						}
@@ -379,7 +377,10 @@ func newVMessNativeParser(content string) (option.Outbound, error) {
 					Transport.GRPCOptions.ServiceName = host
 				}
 			}
-			options.Transport = &Transport
+
+			if Transport.Type != "" {
+				options.Transport = &Transport
+			}
 		case "tfo", "tcp-fast-open", "tcp_fast_open":
 			if value == "1" || value == "true" {
 				options.TCPFastOpen = true
@@ -498,6 +499,7 @@ func newVLESSNativeParser(content string) (option.Outbound, error) {
 				options.Flow = "xtls-rprx-vision"
 			}
 		case "pbk":
+			TLSOptions.Enabled = true
 			TLSOptions.Reality.Enabled = true
 			TLSOptions.Reality.PublicKey = value
 			if sid, exists := proxy["sid"]; exists {

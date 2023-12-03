@@ -102,7 +102,7 @@ func Merge() {
 	filter()
 
 	// Write and populate subs url
-	fmt.Println("[Sub] Found", len(subUrls), "subs link !")
+	fmt.Println("[+] [Sub] Found", len(subUrls), "subs link !")
 	subJson.Url = strings.Join(subUrls, "|")
 
 	out, err := os.Create(SubFile)

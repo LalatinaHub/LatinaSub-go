@@ -381,6 +381,7 @@ func newClashParser(content string) ([]option.Outbound, error) {
 		default:
 			continue
 		}
+
 		if err == nil {
 			outbounds = append(outbounds, outbound)
 			if stlsPart.Type != "" {
@@ -711,7 +712,10 @@ func newVMessClashParser(proxy map[string]any) (option.Outbound, error) {
 			Transport.Type = C.V2RayTransportTypeGRPC
 			Transport.GRPCOptions = convertGRPCTransport(proxy)
 		}
-		options.Transport = &Transport
+
+		if Transport.Type != "" {
+			options.Transport = &Transport
+		}
 	}
 	options.DialerOptions = convertDialerOption(proxy)
 	outbound.VMessOptions = options
@@ -748,7 +752,10 @@ func newVLESSClashParser(proxy map[string]any) (option.Outbound, error) {
 			Transport.Type = C.V2RayTransportTypeGRPC
 			Transport.GRPCOptions = convertGRPCTransport(proxy)
 		}
-		options.Transport = &Transport
+
+		if Transport.Type != "" {
+			options.Transport = &Transport
+		}
 	}
 	options.TLS = convertTLSOptions(proxy)
 	options.Multiplex = convertSMuxOptions(proxy)
@@ -819,7 +826,9 @@ func newTrojanClashParser(proxy map[string]any) (option.Outbound, error) {
 			Transport.Type = C.V2RayTransportTypeGRPC
 			Transport.GRPCOptions = convertGRPCTransport(proxy)
 		}
-		options.Transport = &Transport
+		if Transport.Type != "" {
+			options.Transport = &Transport
+		}
 	}
 	options.TLS = convertTLSOptions(proxy)
 	options.TLS.Enabled = true

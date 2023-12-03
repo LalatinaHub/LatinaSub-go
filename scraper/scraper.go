@@ -43,19 +43,23 @@ func worker(subUrl string) []option.Outbound {
 	io.Copy(buf, resp.Body)
 
 	content := provider.DecodeBase64Safe(buf.String())
-	for _, node := range strings.Split(content, "\n") {
-		outbounds, err := provider.Parse(node)
-		if err != nil {
-			fmt.Println("[Error]", err.Error())
+	for _, l := range strings.Split(content, "\n") {
+		if strings.HasPrefix(l, "http") {
+			nodes = append(nodes, worker(l)...)
 		}
+	}
 
-		for _, outbound := range outbounds {
-			if _, err = json.Marshal(outbound); err != nil {
-				fmt.Println("Error Provider:", err)
-				fmt.Println("Error Parsing:", node)
-			} else {
-				nodes = append(nodes, outbound)
-			}
+	outbounds, err := provider.Parse(content)
+	if err != nil {
+		fmt.Println("[-] Provider:", err.Error())
+	}
+
+	for _, outbound := range outbounds {
+		if _, err = json.Marshal(outbound); err != nil {
+			fmt.Println("[-] Invalid:", err)
+			fmt.Println("[-] Parsing:", content)
+		} else {
+			nodes = append(nodes, outbound)
 		}
 	}
 
@@ -101,7 +105,7 @@ func Run() []option.Outbound {
 				}()
 
 				nodes = append(nodes, worker(subUrl)...)
-				fmt.Printf("[%d/%d] %s : %d\n", id+1, len(subUrls), subUrl, len(nodes))
+				fmt.Printf("[+] [%d/%d] %s : %d\n", id+1, len(subUrls), subUrl, len(nodes))
 			}(i, subUrl)
 		}
 	}

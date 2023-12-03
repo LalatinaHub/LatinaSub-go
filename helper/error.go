@@ -6,7 +6,7 @@ func CatchError(print bool) interface{} {
 	message := recover()
 
 	if message != nil && print {
-		fmt.Println("[Error]", message)
+		fmt.Println("[-] Error:", message)
 	}
 	return message
 }

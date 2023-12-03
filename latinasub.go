@@ -39,7 +39,7 @@ func Start(nodes []option.Outbound, saveToDB bool) (int, []*sandbox.SandBox) {
 		}
 	}
 
-	fmt.Println("Total concurrent:", Concurrent)
+	fmt.Println("[+] Total concurrent:", Concurrent)
 
 	// Initialize all required modules
 	initAll()
@@ -56,7 +56,7 @@ func Start(nodes []option.Outbound, saveToDB bool) (int, []*sandbox.SandBox) {
 	numNodes := len(nodes)
 
 	for i, node := range nodes {
-		fmt.Println("Testing node no", i, "/", len(nodes))
+		fmt.Println("[+] Testing node no", i, "/", len(nodes))
 
 		// Build uid
 		sb := sandbox.SandBox{}
@@ -65,7 +65,7 @@ func Start(nodes []option.Outbound, saveToDB bool) (int, []*sandbox.SandBox) {
 
 		// Blacklist guard
 		if blacklist.Find(uid) {
-			fmt.Printf("[%d/%d] Already scanned/blacklisted\n", i, numNodes)
+			fmt.Printf("[-] [%d/%d] Already scanned/blacklisted\n", i, numNodes)
 			continue
 		}
 
@@ -86,9 +86,9 @@ func Start(nodes []option.Outbound, saveToDB bool) (int, []*sandbox.SandBox) {
 			if box := sandbox.Test(node); box != nil {
 				if len(box.ConnectMode) > 0 {
 					GoodBoxes = append(GoodBoxes, box)
-					fmt.Printf("[%d/%d] Connected in %s mode => %d\n", id, numNodes, strings.Join(box.ConnectMode, " and "), len(GoodBoxes))
+					fmt.Printf("[+] [%d/%d] Connected in %s mode => %d\n", id, numNodes, strings.Join(box.ConnectMode, " and "), len(GoodBoxes))
 				} else {
-					fmt.Printf("[%d/%d] Blacklisted\n", id, numNodes)
+					fmt.Printf("[+] [%d/%d] Blacklisted\n", id, numNodes)
 				}
 				blacklist.Save(uid)
 			}
@@ -99,22 +99,22 @@ func Start(nodes []option.Outbound, saveToDB bool) (int, []*sandbox.SandBox) {
 	wg.Wait()
 
 	// Clear blacklist
-	fmt.Println("Clear blacklist")
+	fmt.Println("[+] Clear blacklist")
 	blacklist.Clear()
 
 	// Write all result to database
 	if saveToDB {
-		fmt.Println("Saving result to database, please wait !")
+		fmt.Println("[+] Saving result to database, please wait !")
 		db.CreateTable()
 		db.Save(GoodBoxes)
 	}
 
 	// Log Info
-	fmt.Println("Excluded servers:", D.ExcludedServer)
-	fmt.Println("Total CPU:", runtime.NumCPU())
-	fmt.Println("Total time collapsed:", time.Since(start))
-	fmt.Println("Total accounts:", db.TotalAccount)
-	fmt.Println("Finish Time:", time.Now().In(loc).Format("2006-01-02 15:04:05"))
+	fmt.Println("[+] Excluded servers:", D.ExcludedServer)
+	fmt.Println("[+] Total CPU:", runtime.NumCPU())
+	fmt.Println("[+] Total time collapsed:", time.Since(start))
+	fmt.Println("[+] Total accounts:", db.TotalAccount)
+	fmt.Println("[+] Finish Time:", time.Now().In(loc).Format("2006-01-02 15:04:05"))
 
 	return db.TotalAccount, GoodBoxes
 }
