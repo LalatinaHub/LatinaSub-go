@@ -830,8 +830,8 @@ func newTrojanClashParser(proxy map[string]any) (option.Outbound, error) {
 			options.Transport = &Transport
 		}
 	}
+	
 	options.TLS = convertTLSOptions(proxy)
-	options.TLS.Enabled = true
 	options.Multiplex = convertSMuxOptions(proxy)
 	options.DialerOptions = convertDialerOption(proxy)
 	outbound.TrojanOptions = options

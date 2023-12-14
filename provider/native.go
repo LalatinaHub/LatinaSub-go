@@ -528,7 +528,7 @@ func newTrojanNativeParser(content string) (option.Outbound, error) {
 	outbound.Tag = decodeURIComponent(result[5])
 	options := option.TrojanOutboundOptions{}
 	TLSOptions := option.OutboundTLSOptions{
-		Enabled: true,
+		Enabled: false,
 		ECH:     &option.OutboundECHOptions{},
 		UTLS:    &option.OutboundUTLSOptions{},
 		Reality: &option.OutboundRealityOptions{},
@@ -547,6 +547,10 @@ func newTrojanNativeParser(content string) (option.Outbound, error) {
 		case "insecure", "allowInsecure", "skip-cert-verify":
 			if value == "1" || value == "true" {
 				TLSOptions.Insecure = true
+			}
+		case "security":
+			if value != "" {
+				TLSOptions.Enabled = true
 			}
 		case "serviceName", "sni", "peer":
 			TLSOptions.ServerName = value
