@@ -14,6 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Get Maxmind assets
+        run: |
+          wget -O ./City.mmdb https://raw.githubusercontent.com/green1052/maxmind-geoip2/master/dist/GeoLite2-City/GeoLite2-City.mmdb
+          wget -O ./ASN.mmdb https://raw.githubusercontent.com/green1052/maxmind-geoip2/master/dist/GeoLite2-ASN/GeoLite2-ASN.mmdb
+
       - name: Set up Go
         uses: actions/setup-go@v4
         with:

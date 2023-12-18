@@ -76,8 +76,8 @@ github.com/onsi/ginkgo/v2 v2.9.5/go.mod h1:tvAoo1QUJwNEU2ITftXTpR7R1RbCzoZUOs3Ro
 github.com/onsi/gomega v1.27.6 h1:ENqfyGeS5AX/rlXDd/ETokDz93u0YufY1Pgxuy/PvWE=
 github.com/ooni/go-libtor v1.1.8 h1:Wo3V3DVTxl5vZdxtQakqYP+DAHx7pPtAFSl1bnAa08w=
 github.com/ooni/go-libtor v1.1.8/go.mod h1:q1YyLwRD9GeMyeerVvwc0vJ2YgwDLTp2bdVcrh/JXyI=
-github.com/oschwald/maxminddb-golang v1.12.0 h1:9FnTOD0YOhP7DGxGsq4glzpGy5+w7pq50AS6wALUMYs=
-github.com/oschwald/maxminddb-golang v1.12.0/go.mod h1:q0Nob5lTCqyQ8WT6FYgS1L7PXKVVbgiymefNwIjPzgY=
+github.com/oschwald/maxminddb-golang v1.12.1-0.20231214003556-410052e7abac h1:3C9JUfuMnfH8aaD1wk9O4zSePdsoukuUx/0PhJ1uoks=
+github.com/oschwald/maxminddb-golang v1.12.1-0.20231214003556-410052e7abac/go.mod h1:0kawubj3NGft5ebnz/vF6rlMA+lvVYTH/1DPI/D/wwY=
 github.com/pierrec/lz4/v4 v4.1.14 h1:+fL8AQEZtz/ijeNnpduH0bROTu0O3NZAlPjQxGn8LwE=
 github.com/pierrec/lz4/v4 v4.1.14/go.mod h1:gZWDp/Ze/IJXGXf23ltt2EXimqmTUXEy0GFuRQyBid4=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

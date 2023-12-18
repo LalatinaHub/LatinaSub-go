@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/lib/pq v1.10.9
+	github.com/oschwald/maxminddb-golang v1.12.1-0.20231214003556-410052e7abac
 	github.com/sagernet/sing v0.2.18-0.20231108041402-4fbbd193203c
 	github.com/sagernet/sing-box v1.7.0-alpha.11
 	gopkg.in/yaml.v3 v3.0.1
@@ -41,7 +42,6 @@ require (
 	github.com/miekg/dns v1.1.56 // indirect
 	github.com/onsi/ginkgo/v2 v2.9.5 // indirect
 	github.com/ooni/go-libtor v1.1.8 // indirect
-	github.com/oschwald/maxminddb-golang v1.12.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.14 // indirect
 	github.com/quic-go/qpack v0.4.0 // indirect
 	github.com/quic-go/qtls-go1-20 v0.3.4 // indirect

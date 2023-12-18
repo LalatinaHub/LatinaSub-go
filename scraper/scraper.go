@@ -86,7 +86,7 @@ func Run() []option.Outbound {
 
 		for i, subUrl := range subUrls {
 			// Limiter
-			if len(nodes) > maxNodes && maxNodes > 1 {
+			if len(nodes) > maxNodes && maxNodes > 0 {
 				break
 			}
 

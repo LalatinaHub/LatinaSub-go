@@ -1,4 +1,4 @@
-package ipapi
+package geoip
 
 var CountryList []Countries = []Countries{
 	{

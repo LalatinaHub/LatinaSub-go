@@ -181,7 +181,7 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		outbound := anyOutbound.(option.VMessOutboundOptions)
 		values = []any{
 			outbound.Server,
-			box.IpapiObj.Ip,
+			box.Geoip.Ip,
 			outbound.ServerPort,
 			outbound.UUID,
 			"", // password
@@ -199,7 +199,7 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		outbound := anyOutbound.(option.TrojanOutboundOptions)
 		values = []any{
 			outbound.Server,
-			box.IpapiObj.Ip,
+			box.Geoip.Ip,
 			outbound.ServerPort,
 			"", // UUID
 			outbound.Password,
@@ -217,7 +217,7 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		outbound := anyOutbound.(option.VLESSOutboundOptions)
 		values = []any{
 			outbound.Server,
-			box.IpapiObj.Ip,
+			box.Geoip.Ip,
 			outbound.ServerPort,
 			outbound.UUID,
 			"", // Password
@@ -235,7 +235,7 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		outbound := anyOutbound.(option.ShadowsocksOutboundOptions)
 		values = []any{
 			outbound.Server,
-			box.IpapiObj.Ip,
+			box.Geoip.Ip,
 			outbound.ServerPort,
 			"", // UUID
 			outbound.Password,
@@ -253,7 +253,7 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		outbound := anyOutbound.(option.ShadowsocksROutboundOptions)
 		values = []any{
 			outbound.Server,
-			box.IpapiObj.Ip,
+			box.Geoip.Ip,
 			outbound.ServerPort,
 			"", // UUID
 			outbound.Password,
@@ -285,11 +285,11 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 	for _, mode := range box.ConnectMode {
 		var valuesString string
 		queryValues := append(values, []any{
-			strings.ToUpper(fmt.Sprintf("%d %s %s %s %s %s", db.TotalAccount+len(queries)+1, helper.CCToEmoji(box.IpapiObj.CountryCode), box.IpapiObj.Org, Transport.Type, mode, TLSSTR)),
+			strings.ToUpper(fmt.Sprintf("%d %s %s %s %s %s", db.TotalAccount+len(queries)+1, helper.CCToEmoji(box.Geoip.CountryCode), box.Geoip.Org, Transport.Type, mode, TLSSTR)),
 			mode,
-			box.IpapiObj.CountryCode,
-			box.IpapiObj.Region,
-			box.IpapiObj.Org,
+			box.Geoip.CountryCode,
+			box.Geoip.Region,
+			box.Geoip.Org,
 			account.Outbound.Type,
 		}...)
 

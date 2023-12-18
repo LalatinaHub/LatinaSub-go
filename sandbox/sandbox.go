@@ -3,6 +3,7 @@ package sandbox
 import (
 	"context"
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,8 +12,8 @@ import (
 	"time"
 
 	"github.com/LalatinaHub/LatinaSub-go/account"
+	"github.com/LalatinaHub/LatinaSub-go/geoip"
 	"github.com/LalatinaHub/LatinaSub-go/helper"
-	"github.com/LalatinaHub/LatinaSub-go/ipapi"
 	B "github.com/sagernet/sing-box"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
@@ -20,16 +21,16 @@ import (
 
 var (
 	populateType     = []string{"cdn", "sni"}
-	connectivityHost = []string{"http://ipapi.co/json", "http://ipinfo.io/json", "http://google.com"}
+	connectivityHost = []string{"http://api.myip.com"}
 )
 
 type SandBox struct {
 	Outbound    option.Outbound
 	ConnectMode []string
-	IpapiObj    ipapi.Ipapi
+	Geoip       geoip.GeoIpJson
 }
 
-func worker(node option.Outbound, connectMode string) (string, ipapi.Ipapi) {
+func worker(node option.Outbound, connectMode string) (string, geoip.GeoIpJson) {
 	var (
 		acc        = account.New(node)
 		options    option.Options
@@ -38,7 +39,7 @@ func worker(node option.Outbound, connectMode string) (string, ipapi.Ipapi) {
 
 	// Guard
 	if acc.Outbound.Type == "" {
-		return "", ipapi.Ipapi{}
+		return "", geoip.GeoIpJson{}
 	}
 
 	if connectMode == "cdn" {
@@ -80,14 +81,14 @@ func worker(node option.Outbound, connectMode string) (string, ipapi.Ipapi) {
 
 		io.Copy(buf, resp.Body)
 		if resp.StatusCode == 200 {
-			if strings.HasSuffix(host, "com") {
-				return connectMode, ipapi.Parse("{}")
+			myip := geoip.MyIp{}
+			if err := json.Unmarshal([]byte(buf.String()), &myip); err == nil {
+				return connectMode, geoip.Parse(myip.Ip)
 			}
-			return connectMode, ipapi.Parse(buf.String())
 		}
 	}
 
-	return "", ipapi.Ipapi{}
+	return "", geoip.GeoIpJson{}
 }
 
 func Test(node option.Outbound) *SandBox {
@@ -104,14 +105,14 @@ func Test(node option.Outbound) *SandBox {
 			}
 		}
 
-		mode, ipapi := func(node option.Outbound, t string) (string, ipapi.Ipapi) {
+		mode, geoip := func(node option.Outbound, t string) (string, geoip.GeoIpJson) {
 			defer helper.CatchError(false)
 			return worker(node, t)
 		}(sb.Outbound, t)
 
 		if mode != "" {
 			sb.ConnectMode = append(sb.ConnectMode, mode)
-			sb.IpapiObj = ipapi
+			sb.Geoip = geoip
 		}
 	}
 
