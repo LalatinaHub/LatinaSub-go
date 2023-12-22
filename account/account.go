@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	cdnHost string = "172.67.73.39"
+	cdnHost string = "104.18.225.52"
 	sniHost string = "meet.google.com"
 )
 

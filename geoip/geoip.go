@@ -1,16 +1,30 @@
 package geoip
 
 import (
+	"io"
 	"net"
+	"net/http"
 	"regexp"
 
 	"github.com/oschwald/maxminddb-golang"
 )
 
+const (
+	CityMmdbUrl = "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb"
+	ASNMmdbUrl  = "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb"
+)
+
 var (
-	symbolRegex    = regexp.MustCompile("[^a-zA-Z0-9 ]")
-	maxmindCity, _ = maxminddb.Open("./City.mmdb")
-	maxmindASN, _  = maxminddb.Open("./ASN.mmdb")
+	symbolRegex = regexp.MustCompile("[^a-zA-Z0-9 ]")
+
+	CityMmdbResp, _ = http.Get(CityMmdbUrl)
+	ASNMmdbResp, _  = http.Get(ASNMmdbUrl)
+
+	CityMmdbBytes, _ = io.ReadAll(CityMmdbResp.Body)
+	ASNMmdbBytes, _  = io.ReadAll(ASNMmdbResp.Body)
+
+	maxmindCity, _ = maxminddb.FromBytes(CityMmdbBytes)
+	maxmindASN, _  = maxminddb.FromBytes(ASNMmdbBytes)
 )
 
 func Parse(ip string) GeoIpJson {
