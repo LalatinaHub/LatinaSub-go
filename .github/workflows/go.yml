@@ -3,7 +3,7 @@ name: Run
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "0 1 * * *"
 
 env:
   DB_URL: ${{ secrets.DB_URL }}
