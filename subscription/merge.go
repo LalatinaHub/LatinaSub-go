@@ -26,6 +26,7 @@ var (
 		"https://raw.githubusercontent.com/mfuu/v2ray/master/list.json",
 		"https://raw.githubusercontent.com/RenaLio/Mux2sub/main/sub_list",
 		"https://raw.githubusercontent.com/RenaLio/Mux2sub/main/urllist",
+		"https://beta-test.cloudaccess.host/mylist.json",
 	}
 
 	client http.Client = http.Client{
