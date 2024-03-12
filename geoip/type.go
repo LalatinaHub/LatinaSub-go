@@ -1,23 +1,10 @@
 package geoip
 
 type MyIp struct {
-	Ip      string `json:"ip"`
-	IpType  int    `json:"ip_type,omitempty"`
-	Country string `json:"country"`
-	CC      string `json:"country_abbr,omitempty"`
-	Region  string `json:"continent,omitempty"`
-	ASN     string `json:"asn,omitempty"`
-	Org     string `json:"asn_org,omitempty"`
-}
-
-type GeoIpCity struct {
-	Country struct {
-		ISOCode string `maxminddb:"iso_code"`
-	} `maxminddb:"country"`
-}
-
-type GeoIpASN struct {
-	ASNName string `maxminddb:"autonomous_system_organization"`
+	Ip      string `json:"YourFuckingIPAddress"`
+	Country string `json:"YourFuckingCountry"`
+	CC      string `json:"YourFuckingCountryCode,omitempty"`
+	Org     string `json:"YourFuckingISP,omitempty"`
 }
 
 type Countries struct {

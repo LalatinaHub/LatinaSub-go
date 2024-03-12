@@ -21,7 +21,7 @@ import (
 
 var (
 	populateType     = []string{"cdn", "sni"}
-	connectivityHost = []string{"http://foolvpn.tech:5000/myip"}
+	connectivityHost = []string{"https://myip.wtf/json"}
 )
 
 type SandBox struct {
@@ -81,9 +81,9 @@ func worker(node option.Outbound, connectMode string) (string, geoip.GeoIpJson) 
 
 		io.Copy(buf, resp.Body)
 		if resp.StatusCode == 200 {
-			myip := geoip.MyIp{}
-			if err := json.Unmarshal([]byte(buf.String()), &myip); err == nil {
-				return connectMode, geoip.Parse(myip.Ip)
+			myIp := geoip.MyIp{}
+			if err := json.Unmarshal([]byte(buf.String()), &myIp); err == nil {
+				return connectMode, geoip.Parse(myIp)
 			}
 		}
 	}
