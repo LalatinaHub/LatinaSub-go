@@ -21,7 +21,7 @@ import (
 
 var (
 	populateType     = []string{"cdn", "sni"}
-	connectivityHost = []string{"https://myip.wtf/json"}
+	connectivityHost = []string{"https://ipv4.myip.wtf/json"}
 )
 
 type SandBox struct {
@@ -62,7 +62,7 @@ func worker(node option.Outbound, connectMode string) (string, geoip.GeoIpJson) 
 
 	proxyClient, _ := url.Parse(fmt.Sprintf("socks5://0.0.0.0:%d", listenPort))
 	httpClient := &http.Client{
-		Timeout: 30 * time.Second,
+		Timeout: 10 * time.Second,
 		Transport: &http.Transport{
 			Proxy: http.ProxyURL(proxyClient),
 			TLSClientConfig: &tls.Config{
