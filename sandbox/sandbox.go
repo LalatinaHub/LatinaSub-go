@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"time"
 
@@ -21,7 +22,8 @@ import (
 
 var (
 	populateType     = []string{"cdn", "sni"}
-	connectivityHost = []string{"https://ipv4.myip.wtf/json"}
+	connectivityHost = []string{"https://ipinfo.io/json"}
+	ipInfoKey        = os.Getenv("IPINFO_KEY")
 )
 
 type SandBox struct {
@@ -73,7 +75,14 @@ func worker(node option.Outbound, connectMode string) (string, geoip.GeoIpJson) 
 
 	for _, host := range connectivityHost {
 		buf := new(strings.Builder)
-		resp, err := httpClient.Get(host)
+		req, err := http.NewRequest("GET", host, nil)
+		if err != nil {
+			panic(err)
+		}
+
+		req.SetBasicAuth(ipInfoKey, "")
+
+		resp, err := httpClient.Do(req)
 		if err != nil {
 			panic(err)
 		}

@@ -1,10 +1,10 @@
 package geoip
 
 type MyIp struct {
-	Ip      string `json:"YourFuckingIPAddress"`
-	Country string `json:"YourFuckingCountry"`
-	CC      string `json:"YourFuckingCountryCode,omitempty"`
-	Org     string `json:"YourFuckingISP,omitempty"`
+	Ip      string `json:"ip"`
+	Country string `json:"country"`
+	CC      string `json:"country,omitempty"`
+	Org     string `json:"org,omitempty"`
 }
 
 type Countries struct {
