@@ -23,7 +23,6 @@ import (
 var (
 	populateType     = []string{"cdn", "sni"}
 	connectivityHost = []string{"https://ipinfo.io/json"}
-	ipInfoKey        = os.Getenv("IPINFO_KEY")
 )
 
 type SandBox struct {
@@ -80,7 +79,7 @@ func worker(node option.Outbound, connectMode string) (string, geoip.GeoIpJson) 
 			panic(err)
 		}
 
-		req.SetBasicAuth(ipInfoKey, "")
+		req.SetBasicAuth(os.Getenv("IPINFO_KEY"), "")
 
 		resp, err := httpClient.Do(req)
 		if err != nil {
