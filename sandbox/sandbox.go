@@ -73,13 +73,17 @@ func worker(node option.Outbound, connectMode string) (string, geoip.GeoIpJson) 
 	}
 
 	for _, host := range connectivityHost {
+		// Modify host
+		switch host {
+		case "https://ipinfo.io/json":
+			host = host + "&token=" + os.Getenv("IPINFO_KEY")
+		}
+
 		buf := new(strings.Builder)
 		req, err := http.NewRequest("GET", host, nil)
 		if err != nil {
 			panic(err)
 		}
-
-		req.SetBasicAuth(os.Getenv("IPINFO_KEY"), "")
 
 		resp, err := httpClient.Do(req)
 		if err != nil {
