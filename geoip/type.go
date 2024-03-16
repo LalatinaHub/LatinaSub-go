@@ -1,9 +1,11 @@
 package geoip
 
 type MyIp struct {
-	Ip  string `json:"ip"`
-	CC  string `json:"country,omitempty"`
-	Org string `json:"org,omitempty"`
+	Ip      string `json:"ip,omitempty"`
+	Query   string `json:"query,omitempty"`
+	Country string `json:"country,omitempty"`
+	CC      string `json:"countryCode,omitempty"`
+	Org     string `json:"org,omitempty"`
 }
 
 type Countries struct {

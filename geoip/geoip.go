@@ -10,20 +10,27 @@ var (
 
 func Parse(myIp MyIp) GeoIpJson {
 	result := GeoIpJson{
-		Ip:          myIp.Ip,
+		Ip:          "0.0.0.0",
 		CountryName: "Unknown",
 		CountryCode: "XX",
 		Region:      "Unknown",
 		Org:         "LalatinaHub",
 	}
 
+	if myIp.Query != "" {
+		result.Ip = myIp.Query
+	} else {
+		result.Ip = myIp.Ip
+	}
+
 	for _, country := range CountryList {
-		if myIp.CC == country.Code {
+		switch country.Code {
+		case myIp.Country, myIp.CC:
 			result.CountryName = country.Name
 			result.CountryCode = country.Code
 			result.Region = country.Region
 			result.Org = symbolRegex.ReplaceAllString(myIp.Org, "")
-			break
+			return result
 		}
 	}
 
