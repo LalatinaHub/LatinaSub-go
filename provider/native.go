@@ -445,19 +445,21 @@ func newVLESSNativeParser(content string) (option.Outbound, error) {
 					for _, header := range strings.Split(fmt.Sprint("Host:", host), "\n") {
 						reg := regexp.MustCompile(`^[ \t]*?(\S+?):[ \t]*?(\S+?)[ \t]*?$`)
 						result := reg.FindStringSubmatch(header)
-						key := result[1]
-						value := []string{}
-						for _, item := range strings.Split(result[2], ",") {
-							value = append(value, TrimBlank(item))
+						if len(result) >= 1 {
+							key := result[1]
+							value := []string{}
+							for _, item := range strings.Split(result[2], ",") {
+								value = append(value, TrimBlank(item))
+							}
+							Transport.WebsocketOptions.Headers[key] = value
 						}
-						Transport.WebsocketOptions.Headers[key] = value
 					}
 				}
 				if path, exists := proxy["path"]; exists && path != "" {
 					reg := regexp.MustCompile(`^(.*?)(?:\?ed=(\d*))?$`)
 					result := reg.FindStringSubmatch(path)
 					Transport.WebsocketOptions.Path = result[1]
-					if result[2] != "" {
+					if len(result) >= 2 && result[2] != "" {
 						Transport.WebsocketOptions.EarlyDataHeaderName = "Sec-WebSocket-Protocol"
 						Transport.WebsocketOptions.MaxEarlyData = stringToUint32(result[2])
 					}
