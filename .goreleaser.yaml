@@ -1,0 +1,9 @@
+project_name: latinasub
+builds:
+  - id: main
+    main: ./cmd/latinasub
+    env:
+      - CGO_ENABLED=1
+    mod_timestamp: '{{ .CommitTimestamp }}'
+snapshot:
+  name_template: "{{ .Version }}.{{ .ShortCommit }}"
