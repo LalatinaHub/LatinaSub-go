@@ -25,6 +25,7 @@ jobs:
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@v5
       with:
+        main: ./cmd/latinasub
         distribution: goreleaser
         version: latest
         args: release --clean --snapshot
