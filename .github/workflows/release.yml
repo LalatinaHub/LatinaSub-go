@@ -19,17 +19,11 @@ jobs:
       with:
           check-latest: true
 
-    - name: Generate build files
-      uses: thatisuday/go-build-action@v1
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v5
       with:
-        platforms: "linux/amd64"
-        name: "latinasub"
-        compress: "true"
-        dest: "dist"
-
-    - name: Upload build-artifacts
-      uses: skx/github-action-publish-binaries@master
+        distribution: goreleaser
+        version: latest
+        args: release --clean
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        args: "./dist/*.tar.gz"
