@@ -3,7 +3,7 @@ builds:
   - id: main
     main: ./cmd/latinasub
     env:
-      - CGO_ENABLED=1
+      - CGO_ENABLED=0
     mod_timestamp: '{{ .CommitTimestamp }}'
 snapshot:
   name_template: "{{ .Version }}.{{ .ShortCommit }}"
