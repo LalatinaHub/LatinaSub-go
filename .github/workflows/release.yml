@@ -28,13 +28,6 @@ jobs:
         main: ./cmd/latinasub
         distribution: goreleaser
         version: latest
-        args: release --clean --snapshot
+        args: release --snapshot
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload build-artifacts
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: latest
-        files: dist/*.tar.gz
-        generate_release_notes: true
