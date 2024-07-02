@@ -21,7 +21,7 @@ import (
 
 var (
 	populateType     = []string{"cdn", "sni"}
-	connectivityHost = []string{"http://ip-api.com/json", "http://ipinfo.io/json"}
+	connectivityHost = []string{"https://ipv4.json.myip.wtf"}
 )
 
 type SandBox struct {
