@@ -290,7 +290,7 @@ func convertDialerOption(proxy map[string]any) option.DialerOptions {
 	}
 	if mark, exists := proxy["routing-mark"].(int); exists {
 		if runtime.GOOS == "android" || runtime.GOOS == "linux" {
-			options.RoutingMark = mark
+			options.RoutingMark = uint32(mark)
 		}
 	}
 	if detour, exists := proxy["dialer-proxy"].(string); exists {
@@ -830,7 +830,7 @@ func newTrojanClashParser(proxy map[string]any) (option.Outbound, error) {
 			options.Transport = &Transport
 		}
 	}
-	
+
 	options.TLS = convertTLSOptions(proxy)
 	options.Multiplex = convertSMuxOptions(proxy)
 	options.DialerOptions = convertDialerOption(proxy)
