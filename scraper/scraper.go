@@ -84,6 +84,10 @@ func Run() []option.Outbound {
 	for _, subData := range subFile {
 		subUrls := strings.Split(subData.Url, "|")
 
+		for _, subUrl := range subUrls {
+			subUrls = append(subUrls, "https://sub.bonds.id/sub2?target=clash&insert=false&url="+subUrl)
+		}
+
 		for i, subUrl := range subUrls {
 			// Limiter
 			if len(nodes) > maxNodes && maxNodes > 0 {
