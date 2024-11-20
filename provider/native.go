@@ -27,6 +27,21 @@ func newNativeURIParser(content string) ([]option.Outbound, error) {
 		)
 		protocol := strings.ToLower(TrimBlank(parsedArr[1]))
 		parsedProxy := TrimBlank(DecodeBase64Safe(TrimBlank(parsedArr[2])))
+
+		unfilteredProxy := make(map[string]interface{})
+		err = json.Unmarshal([]byte(parsedProxy), &unfilteredProxy)
+		if err == nil {
+			filteredProxy := make(map[string]string)
+			for key, value := range unfilteredProxy {
+				filteredProxy[key] = fmt.Sprintf("%v", value)
+			}
+
+			byteParsedProxy, err := json.Marshal(filteredProxy)
+			if err == nil {
+				parsedProxy = string(byteParsedProxy[:])
+			}
+		}
+
 		switch protocol {
 		case "ss":
 			outbound, err = newSSNativeParser(parsedProxy)
