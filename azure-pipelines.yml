@@ -1,0 +1,37 @@
+trigger:
+  none
+
+schedules:
+- cron: "0 1 * * *"
+  displayName: "Scheduled Run"
+  always: true
+
+variables:
+  DB_URL: $(DB_URL)
+
+stages:
+- stage: BuildAndRun
+  displayName: "Build and Run LatinaSub-Go"
+  jobs:
+  - job: BuildAndRunJob
+    displayName: "Build and Run Job"
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: UseGitVersion@1
+      displayName: "Checkout Code"
+      inputs:
+        fetchDepth: 0
+
+    - task: UseGo@0
+      displayName: "Set up Go"
+      inputs:
+        version: 'latest'
+
+    - script: go build -o ./latinasub ./cmd/latinasub/main.go
+      displayName: "Build LatinaSub-Go"
+
+    - script: ./latinasub save_to_db
+      displayName: "Run LatinaSub-Go"
+      env:
+        CONCURRENT: "200"
