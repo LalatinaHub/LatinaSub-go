@@ -10,7 +10,7 @@ schedules:
   always: true
 
 variables:
-  DB_URL: $(DB_URL)
+  - group: SecretVariables
 
 stages:
 - stage: BuildAndRun
@@ -38,4 +38,5 @@ stages:
     - script: ./latinasub save_to_db
       displayName: "Run LatinaSub-Go"
       env:
+        DB_URL: $(DB_URL)
         CONCURRENT: "200"
