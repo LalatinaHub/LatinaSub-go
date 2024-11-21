@@ -4,6 +4,9 @@ trigger:
 schedules:
 - cron: "0 1 * * *"
   displayName: "Scheduled Run"
+  branches:
+    include:
+      - main
   always: true
 
 variables:
@@ -18,15 +21,16 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
-    - task: UseGitVersion@1
+    - checkout: self
       displayName: "Checkout Code"
-      inputs:
-        fetchDepth: 0
 
-    - task: UseGo@0
+    - script: |
+        echo "Installing Go..."
+        wget https://golang.org/dl/go1.23.0.linux-amd64.tar.gz -O go.tar.gz
+        sudo tar -C /usr/local -xzf go.tar.gz
+        echo "##vso[task.prependpath]/usr/local/go/bin"
+        go version
       displayName: "Set up Go"
-      inputs:
-        version: 'latest'
 
     - script: go build -o ./latinasub ./cmd/latinasub/main.go
       displayName: "Build LatinaSub-Go"
