@@ -71,24 +71,28 @@ func worker(node option.Outbound, connectMode string) (string, geoip.GeoIpJson) 
 		},
 	}
 
-	for _, host := range connectivityHost {
-		buf := new(strings.Builder)
-		req, err := http.NewRequest("GET", host, nil)
-		if err != nil {
-			panic(err)
-		}
+	req, _ := http.NewRequest("GET", "https://speed.cloudflare.com", nil)
+	resp, err := httpClient.Do(req)
+	if resp.StatusCode == 200 && err == nil {
+		for _, host := range connectivityHost {
+			buf := new(strings.Builder)
+			req, err = http.NewRequest("GET", host, nil)
+			if err != nil {
+				panic(err)
+			}
 
-		resp, err := httpClient.Do(req)
-		if err != nil {
-			panic(err)
-		}
-		defer resp.Body.Close()
+			resp, err := httpClient.Do(req)
+			if err != nil {
+				panic(err)
+			}
+			defer resp.Body.Close()
 
-		io.Copy(buf, resp.Body)
-		if resp.StatusCode == 200 {
-			myIp := geoip.MyIp{}
-			if err := json.Unmarshal([]byte(buf.String()), &myIp); err == nil {
-				return connectMode, geoip.Parse(myIp)
+			io.Copy(buf, resp.Body)
+			if resp.StatusCode == 200 {
+				myIp := geoip.MyIp{}
+				if err := json.Unmarshal([]byte(buf.String()), &myIp); err == nil {
+					return connectMode, geoip.Parse(myIp)
+				}
 			}
 		}
 	}
