@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/LalatinaHub/LatinaSub-go/helper"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
 	E "github.com/sagernet/sing/common/exceptions"
@@ -64,6 +65,10 @@ func newNativeURIParser(content string) ([]option.Outbound, error) {
 		}
 		if err == nil {
 			outbounds = append(outbounds, outbound)
+		} else {
+			if helper.IsTest() {
+				return outbounds, err
+			}
 		}
 	}
 	return outbounds, nil
