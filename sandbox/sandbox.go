@@ -21,7 +21,7 @@ import (
 
 var (
 	populateType     = []string{"cdn", "sni"}
-	connectivityHost = []string{"https://ipv4.json.myip.wtf"}
+	connectivityHost = []string{"https://myip.shylook.workers.dev"}
 )
 
 type SandBox struct {
@@ -71,7 +71,7 @@ func worker(node option.Outbound, connectMode string) (string, geoip.GeoIpJson) 
 		},
 	}
 
-	req, _ := http.NewRequest("GET", "https://speed.cloudflare.com", nil)
+	req, _ := http.NewRequest("GET", "https://1.1.1.1/cdn-cgi/trace", nil)
 	resp, err := httpClient.Do(req)
 	if resp.StatusCode == 200 && err == nil {
 		for _, host := range connectivityHost {

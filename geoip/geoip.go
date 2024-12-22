@@ -18,7 +18,7 @@ func Parse(myIp MyIp) GeoIpJson {
 	}
 
 	for _, country := range CountryList {
-		if country.Code == myIp.CC || country.Name == myIp.Country {
+		if country.Code == myIp.CC {
 			result.CountryName = country.Name
 			result.CountryCode = country.Code
 			result.Region = country.Region
