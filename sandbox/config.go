@@ -16,6 +16,14 @@ func generateConfig(out *option.Outbound) (option.Options, uint) {
 			Level:     "error",
 			Timestamp: true,
 		},
+		DNS: &option.DNSOptions{
+			Servers: []option.DNSServerOptions{
+				{
+					Address: "1.1.1.1",
+					Detour:  "direct",
+				},
+			},
+		},
 		Inbounds: []option.Inbound{
 			{
 				Type: C.TypeMixed,
@@ -28,7 +36,22 @@ func generateConfig(out *option.Outbound) (option.Options, uint) {
 			},
 		},
 		Outbounds: []option.Outbound{
+			{
+				Tag:  C.TypeDirect,
+				Type: C.TypeDirect,
+			},
 			*out,
+		},
+		Route: &option.RouteOptions{
+			Rules: []option.Rule{
+				{
+					DefaultOptions: option.DefaultRule{
+						Network:  option.Listable[string]{"udp"},
+						Outbound: C.TypeDirect,
+					},
+				},
+			},
+			Final: out.Tag,
 		},
 	}
 
