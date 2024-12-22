@@ -21,7 +21,7 @@ import (
 
 var (
 	populateType     = []string{"cdn", "sni"}
-	connectivityHost = []string{"https://myip.shylook.workers.dev"}
+	connectivityHost = []string{geoip.IP_RESOLVER_DOMAIN + geoip.IP_RESOLVER_PATH}
 )
 
 type SandBox struct {
@@ -114,14 +114,16 @@ func Test(node option.Outbound) *SandBox {
 			}
 		}
 
-		mode, geoip := func(node option.Outbound, t string) (string, geoip.GeoIpJson) {
+		mode, geoproxyip := func(node option.Outbound, t string) (string, geoip.GeoIpJson) {
 			defer helper.CatchError(false)
 			return worker(node, t)
 		}(sb.Outbound, t)
 
 		if mode != "" {
-			sb.ConnectMode = append(sb.ConnectMode, mode)
-			sb.Geoip = geoip
+			if geoproxyip.Ip != geoip.GetMyIpInfo().Ip {
+				sb.ConnectMode = append(sb.ConnectMode, mode)
+				sb.Geoip = geoproxyip
+			}
 		}
 	}
 
