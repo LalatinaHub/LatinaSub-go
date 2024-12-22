@@ -41,4 +41,4 @@ stages:
         BOT_TOKEN: $(BOT_TOKEN)
         ADMIN_ID: $(ADMIN_ID)
         DB_URL: $(DB_URL)
-        CONCURRENT: "200"
+        CONCURRENT: "400"
