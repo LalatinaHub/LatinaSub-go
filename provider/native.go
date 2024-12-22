@@ -197,9 +197,10 @@ func newTuicNativeParser(content string) (option.Outbound, error) {
 	outbound.Tag = decodeURIComponent(result[6])
 	options := option.TUICOutboundOptions{}
 	TLSOptions := option.OutboundTLSOptions{
-		ECH:     &option.OutboundECHOptions{},
-		UTLS:    &option.OutboundUTLSOptions{},
-		Reality: &option.OutboundRealityOptions{},
+		Insecure: true,
+		ECH:      &option.OutboundECHOptions{},
+		UTLS:     &option.OutboundUTLSOptions{},
+		Reality:  &option.OutboundRealityOptions{},
 	}
 	options.UUID = result[1]
 	options.Password = result[2]
@@ -285,9 +286,10 @@ func newVMessNativeParser(content string) (option.Outbound, error) {
 	outbound.Type = C.TypeVMess
 	options := option.VMessOutboundOptions{}
 	TLSOptions := option.OutboundTLSOptions{
-		ECH:     &option.OutboundECHOptions{},
-		UTLS:    &option.OutboundUTLSOptions{},
-		Reality: &option.OutboundRealityOptions{},
+		Insecure: true,
+		ECH:      &option.OutboundECHOptions{},
+		UTLS:     &option.OutboundUTLSOptions{},
+		Reality:  &option.OutboundRealityOptions{},
 	}
 	for key, value := range proxy {
 		switch key {
@@ -424,9 +426,10 @@ func newVLESSNativeParser(content string) (option.Outbound, error) {
 	outbound.Tag = decodeURIComponent(result[5])
 	options := option.VLESSOutboundOptions{}
 	TLSOptions := option.OutboundTLSOptions{
-		ECH:     &option.OutboundECHOptions{},
-		UTLS:    &option.OutboundUTLSOptions{},
-		Reality: &option.OutboundRealityOptions{},
+		Insecure: true,
+		ECH:      &option.OutboundECHOptions{},
+		UTLS:     &option.OutboundUTLSOptions{},
+		Reality:  &option.OutboundRealityOptions{},
 	}
 	options.UUID = decodeURIComponent(result[1])
 	options.Server = result[2]
@@ -550,10 +553,11 @@ func newTrojanNativeParser(content string) (option.Outbound, error) {
 	outbound.Tag = decodeURIComponent(result[5])
 	options := option.TrojanOutboundOptions{}
 	TLSOptions := option.OutboundTLSOptions{
-		Enabled: false,
-		ECH:     &option.OutboundECHOptions{},
-		UTLS:    &option.OutboundUTLSOptions{},
-		Reality: &option.OutboundRealityOptions{},
+		Enabled:  false,
+		Insecure: true,
+		ECH:      &option.OutboundECHOptions{},
+		UTLS:     &option.OutboundUTLSOptions{},
+		Reality:  &option.OutboundRealityOptions{},
 	}
 	options.Server = result[2]
 	TLSOptions.ServerName = result[2]
@@ -649,10 +653,11 @@ func newHysteriaNativeParser(content string) (option.Outbound, error) {
 	outbound.Tag = result[4]
 	options := option.HysteriaOutboundOptions{}
 	TLSOptions := option.OutboundTLSOptions{
-		Enabled: true,
-		ECH:     &option.OutboundECHOptions{},
-		UTLS:    &option.OutboundUTLSOptions{},
-		Reality: &option.OutboundRealityOptions{},
+		Enabled:  true,
+		Insecure: true,
+		ECH:      &option.OutboundECHOptions{},
+		UTLS:     &option.OutboundUTLSOptions{},
+		Reality:  &option.OutboundRealityOptions{},
 	}
 	options.Server = result[1]
 	TLSOptions.ServerName = result[1]
@@ -707,10 +712,11 @@ func newHysteria2NativeParser(content string) (option.Outbound, error) {
 	outbound.Tag = result[5]
 	options := option.Hysteria2OutboundOptions{}
 	TLSOptions := option.OutboundTLSOptions{
-		Enabled: true,
-		ECH:     &option.OutboundECHOptions{},
-		UTLS:    &option.OutboundUTLSOptions{},
-		Reality: &option.OutboundRealityOptions{},
+		Enabled:  true,
+		Insecure: true,
+		ECH:      &option.OutboundECHOptions{},
+		UTLS:     &option.OutboundUTLSOptions{},
+		Reality:  &option.OutboundRealityOptions{},
 	}
 	options.ServerPort = uint16(443)
 	options.Server = result[2]

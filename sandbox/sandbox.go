@@ -71,7 +71,7 @@ func worker(node option.Outbound, connectMode string) (string, geoip.GeoIpJson) 
 		},
 	}
 
-	req, _ := http.NewRequest("GET", "https://1.1.1.1/cdn-cgi/trace", nil)
+	req, _ := http.NewRequest("GET", "https://speed.cloudflare.com/cdn-cgi/trace", nil)
 	resp, err := httpClient.Do(req)
 	if resp.StatusCode == 200 && err == nil {
 		for _, host := range connectivityHost {

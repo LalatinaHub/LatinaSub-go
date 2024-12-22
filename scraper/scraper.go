@@ -89,6 +89,10 @@ func Run() []option.Outbound {
 		subUrls := strings.Split(subData.Url, "|")
 
 		for i, subUrl := range subUrls {
+			if !strings.HasPrefix(subUrl, "http") {
+				continue
+			}
+
 			// Limiter
 			if len(nodes) > maxNodes && maxNodes > 0 {
 				break

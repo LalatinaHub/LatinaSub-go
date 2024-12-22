@@ -43,6 +43,22 @@ func generateConfig(out *option.Outbound) (option.Options, uint) {
 			},
 		},
 		Route: &option.RouteOptions{
+			Rules: []option.Rule{
+				{
+					Type: C.RuleTypeDefault,
+					DefaultOptions: option.DefaultRule{
+						Protocol: option.Listable[string]{"dns"},
+						Outbound: "direct",
+					},
+				},
+				{
+					Type: C.RuleTypeDefault,
+					DefaultOptions: option.DefaultRule{
+						Network:  option.Listable[string]{"udp"},
+						Outbound: "direct",
+					},
+				},
+			},
 			Final: out.Tag,
 		},
 	}
