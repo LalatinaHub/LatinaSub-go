@@ -36,11 +36,14 @@ func generateConfig(out *option.Outbound) (option.Options, uint) {
 			},
 		},
 		Outbounds: []option.Outbound{
+			*out,
 			{
 				Tag:  C.TypeDirect,
 				Type: C.TypeDirect,
 			},
-			*out,
+		},
+		Route: &option.RouteOptions{
+			Final: out.Tag,
 		},
 	}
 
