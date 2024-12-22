@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -44,8 +45,11 @@ func worker(subUrl string) []option.Outbound {
 
 	content := provider.DecodeBase64Safe(buf.String())
 	for _, l := range strings.Split(content, "\n") {
-		if strings.HasPrefix(l, "http") {
-			nodes = append(nodes, worker(l)...)
+		htmlTagPattern := regexp.MustCompile(`<[\w(\/?)]+>`)
+		for _, k := range htmlTagPattern.Split(l, -1) {
+			if strings.HasPrefix(k, "http") {
+				nodes = append(nodes, worker(k)...)
+			}
 		}
 	}
 

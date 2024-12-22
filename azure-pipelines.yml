@@ -1,44 +1,43 @@
-trigger:
-  none
+trigger: none
 
 schedules:
-- cron: "0 1 * * *"
-  displayName: "Scheduled Run"
-  branches:
-    include:
-      - main
-  always: true
+  - cron: "0 1 * * *"
+    displayName: "Scheduled Run"
+    branches:
+      include:
+        - main
+    always: true
 
 variables:
   - group: SecretVariables
 
 stages:
-- stage: BuildAndRun
-  displayName: "Build and Run LatinaSub-Go"
-  jobs:
-  - job: BuildAndRunJob
-    displayName: "Build and Run Job"
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - checkout: self
-      displayName: "Checkout Code"
+  - stage: BuildAndRun
+    displayName: "Build and Run LatinaSub-Go"
+    jobs:
+      - job: BuildAndRunJob
+        displayName: "Build and Run Job"
+        pool:
+          vmImage: "ubuntu-latest"
+        steps:
+          - checkout: self
+            displayName: "Checkout Code"
 
-    - script: |
-        echo "Installing Go..."
-        wget https://golang.org/dl/go1.23.0.linux-amd64.tar.gz -O go.tar.gz
-        sudo tar -C /usr/local -xzf go.tar.gz
-        echo "##vso[task.prependpath]/usr/local/go/bin"
-        go version
-      displayName: "Set up Go"
+          - script: |
+              echo "Installing Go..."
+              wget https://golang.org/dl/go1.23.0.linux-amd64.tar.gz -O go.tar.gz
+              sudo tar -C /usr/local -xzf go.tar.gz
+              echo "##vso[task.prependpath]/usr/local/go/bin"
+              go version
+            displayName: "Set up Go"
 
-    - script: go build -o ./latinasub ./cmd/latinasub/main.go
-      displayName: "Build LatinaSub-Go"
+          - script: go build -o ./latinasub ./cmd/latinasub/main.go
+            displayName: "Build LatinaSub-Go"
 
-    - script: ./latinasub save_to_db
-      displayName: "Run LatinaSub-Go"
-      env:
-        BOT_TOKEN: $(BOT_TOKEN)
-        ADMIN_ID: $(ADMIN_ID)
-        DB_URL: $(DB_URL)
-        CONCURRENT: "400"
+          - script: ./latinasub save_to_db
+            displayName: "Run LatinaSub-Go"
+            env:
+              BOT_TOKEN: $(BOT_TOKEN)
+              ADMIN_ID: $(ADMIN_ID)
+              DB_URL: $(DB_URL)
+              CONCURRENT: "200"
