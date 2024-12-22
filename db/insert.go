@@ -10,6 +10,7 @@ import (
 
 	"github.com/LalatinaHub/LatinaSub-go/account"
 	"github.com/LalatinaHub/LatinaSub-go/helper"
+	"github.com/LalatinaHub/LatinaSub-go/modules/bot"
 	"github.com/LalatinaHub/LatinaSub-go/sandbox"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
@@ -102,6 +103,9 @@ func (db *DB) Save(boxes []*sandbox.SandBox) {
 			defer f.Close()
 
 			f.WriteString(transactionQuery)
+
+			fmt.Println("Sending database query to admin...")
+			bot.SendTextFileToAdmin("db_query.txt", transactionQuery)
 		}
 	}
 }

@@ -5,6 +5,7 @@ go 1.22.7
 toolchain go1.23.2
 
 require (
+	github.com/NicoNex/echotron/v3 v3.39.0
 	github.com/lib/pq v1.10.9
 	github.com/sagernet/sing v0.5.1
 	github.com/sagernet/sing-box v1.10.2
