@@ -42,17 +42,6 @@ func generateConfig(out *option.Outbound) (option.Options, uint) {
 			},
 			*out,
 		},
-		Route: &option.RouteOptions{
-			Rules: []option.Rule{
-				{
-					DefaultOptions: option.DefaultRule{
-						Network:  option.Listable[string]{"udp"},
-						Outbound: C.TypeDirect,
-					},
-				},
-			},
-			Final: out.Tag,
-		},
 	}
 
 	return options, listenPort
