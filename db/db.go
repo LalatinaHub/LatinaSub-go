@@ -40,8 +40,8 @@ func (db *DB) connect() *sql.DB {
 
 func (db *DB) isExists(values []any) bool {
 	// Refer to data scheme
-	// Server Port, UUID, Password, Transport, Conn Mode, VPN
-	uid := fmt.Sprintf("%d_%s_%s_%s_%s_%s", values[2], values[3], values[4], values[16], values[22], values[26])
+	// Server Port, UUID, Password, Path, Transport, Conn Mode, VPN
+	uid := fmt.Sprintf("%d_%s_%s_%s_%s_%s_%s", values[2], values[3], values[4], values[17], values[16], values[22], values[26])
 
 	if values[22] == "cdn" {
 		// Host
