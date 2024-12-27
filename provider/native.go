@@ -123,28 +123,34 @@ func newSSNativeParser(content string) (option.Outbound, error) {
 	options := option.ShadowsocksOutboundOptions{}
 	options.Server = result[2]
 	options.ServerPort = stringToUint16(result[3])
-	cryptoArr := strings.Split(DecodeBase64Safe(result[1]), ":")
+	userCred, err := url.QueryUnescape(result[1])
+	if err != nil {
+		userCred = result[1]
+	}
+	cryptoArr := strings.Split(DecodeBase64Safe(userCred), ":")
 	if len(cryptoArr) == 2 {
 		options.Method, options.Password = cryptoArr[0], cryptoArr[1]
 	} else {
 		options.Method, options.Password = "none", cryptoArr[0]
 	}
 	plugin := ""
-	pluginArr := []string{}
+	pluginOpts := ""
 	for _, addon := range strings.Split(decodeURIComponent(result[4]), "&") {
 		key, value := splitKeyValueWithEqual(addon)
 		switch key {
 		case "plugin":
 			if strings.Contains(value, "obfs") {
 				plugin = "obfs-local"
+			} else if strings.Contains(value, "v2ray") {
+				plugin = "v2ray-plugin"
 			}
-		default:
-			pluginArr = append(pluginArr, addon)
+
+			pluginOpts = strings.Replace(addon, fmt.Sprintf("%s=%s;", key, plugin), "", 1)
 		}
 	}
 	if plugin != "" {
 		options.Plugin = plugin
-		options.PluginOptions = strings.Join(pluginArr, ";")
+		options.PluginOptions = pluginOpts
 	}
 	outbound.ShadowsocksOptions = options
 	return outbound, nil
@@ -321,8 +327,10 @@ func newVMessNativeParser(content string) (option.Outbound, error) {
 				TLSOptions.Insecure = true
 			}
 		case "fp":
-			TLSOptions.UTLS.Enabled = true
-			TLSOptions.UTLS.Fingerprint = value
+			if value != "" {
+				TLSOptions.UTLS.Enabled = true
+				TLSOptions.UTLS.Fingerprint = value
+			}
 		case "net":
 			Transport := option.V2RayTransportOptions{
 				Type: "",
