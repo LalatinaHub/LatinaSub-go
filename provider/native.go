@@ -575,7 +575,7 @@ func newTrojanNativeParser(content string) (option.Outbound, error) {
 				TLSOptions.Insecure = true
 			}
 		case "security":
-			if value != "" {
+			if value != "" && value != "none" {
 				TLSOptions.Enabled = true
 			}
 		case "serviceName", "sni", "peer":
