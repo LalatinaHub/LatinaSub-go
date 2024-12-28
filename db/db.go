@@ -8,9 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var (
-	conn *sql.DB
-)
+var conn *sql.DB
 
 type DB struct {
 	TotalAccount int

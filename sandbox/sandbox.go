@@ -15,7 +15,6 @@ import (
 	"github.com/LalatinaHub/LatinaSub-go/geoip"
 	"github.com/LalatinaHub/LatinaSub-go/helper"
 	B "github.com/sagernet/sing-box"
-	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/option"
 )
 
@@ -107,13 +106,6 @@ func Test(node option.Outbound) *SandBox {
 	sb.Outbound = node
 
 	for _, t := range populateType {
-		switch sb.Outbound.Type {
-		case C.TypeShadowsocksR, C.TypeShadowsocks:
-			if t == "cdn" {
-				continue
-			}
-		}
-
 		mode, geoproxyip := func(node option.Outbound, t string) (string, geoip.GeoIpJson) {
 			defer helper.CatchError(false)
 			return worker(node, t)

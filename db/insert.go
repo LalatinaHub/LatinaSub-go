@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-	"regexp"
 	"strings"
 
 	"github.com/LalatinaHub/LatinaSub-go/account"
@@ -138,14 +137,6 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 		Transport = account.Outbound.VLESSOptions.Transport
 	case C.TypeShadowsocks:
 		anyOutbound = account.Outbound.ShadowsocksOptions
-	case C.TypeShadowsocksR:
-		anyOutbound = account.Outbound.ShadowsocksROptions
-
-		if m, _ := regexp.MatchString("tls", account.Outbound.ShadowsocksROptions.Obfs); m {
-			TLS = &option.OutboundTLSOptions{
-				Enabled: true,
-			}
-		}
 	}
 
 	// Null safe BEGIN
@@ -252,24 +243,6 @@ func (db *DB) BuildValuesQuery(box *sandbox.SandBox) []string {
 			"", // Protocol Opts
 			"", // OBFS
 			"", // OBFS Param
-		}
-	case C.TypeShadowsocksR:
-		outbound := anyOutbound.(option.ShadowsocksROutboundOptions)
-		values = []any{
-			outbound.Server,
-			box.Geoip.Ip,
-			outbound.ServerPort,
-			"", // UUID
-			outbound.Password,
-			"", // Security
-			0,  // Alter ID
-			outbound.Method,
-			"", // Plugin
-			"", // Plugin Options
-			outbound.Protocol,
-			outbound.ProtocolParam,
-			outbound.Obfs,
-			outbound.ObfsParam,
 		}
 	default:
 		return queries
